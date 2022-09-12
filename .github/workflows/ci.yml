@@ -12,15 +12,13 @@ jobs:
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 2
-    strategy:
-      matrix:
-        java: [ '8', '11', '17', '18' ]
+
     steps:
     - uses: actions/checkout@v3
     - name: Set up JDK
       uses: actions/setup-java@v3
       with:
-        java-version: ${{ matrix.java }}
+        java-version: 20
         distribution: 'temurin'
     - name: Build
       run: ./mvnw --no-transfer-progress -B clean verify --file pom.xml
