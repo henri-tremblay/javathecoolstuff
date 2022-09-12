@@ -22,7 +22,7 @@
 
     <groupId>pro.tremblay.core</groupId>
     <artifactId>javathecoolstuff-parent</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>${revision}</version>
     <inceptionYear>2022</inceptionYear>
     <packaging>pom</packaging>
 
