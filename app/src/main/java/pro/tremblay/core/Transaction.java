@@ -15,19 +15,17 @@
  */
 package pro.tremblay.core;
 
-import javax.annotation.concurrent.NotThreadSafe;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 /**
  * A transaction that happened on a position.
  */
-@NotThreadSafe
 public class Transaction {
 
     /** Type of transaction **/
     private TransactionType type;
-    /** Date at which the transaction occured */
+    /** Date at which the transaction occurred */
     private LocalDate date;
     /** Amount of cash exchanged during the transaction. The amount is always positive, the side of the transaction is determined by its type */
     private BigDecimal cash;

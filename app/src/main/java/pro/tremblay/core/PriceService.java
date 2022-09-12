@@ -15,8 +15,6 @@
  */
 package pro.tremblay.core;
 
-import javax.annotation.Nonnull;
-import javax.annotation.concurrent.ThreadSafe;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
@@ -27,7 +25,6 @@ import java.util.concurrent.ConcurrentMap;
 /**
  * Service returning security prices. This is actually a fake implementation using randomly generated prices.
  */
-@ThreadSafe
 public class PriceService {
 
     private static final ConcurrentMap<String, BigDecimal> prices = new ConcurrentHashMap<>();
@@ -61,8 +58,7 @@ public class PriceService {
      * @throws IllegalArgumentException if no price is found at this date
      * @return the price of the security at a given date
      */
-    @Nonnull
-    public static BigDecimal getPrice(@Nonnull LocalDate date, @Nonnull Security security) {
+    public static BigDecimal getPrice(LocalDate date, Security security) {
         BigDecimal price = prices.get(getKey(security, date));
         if(price == null) {
             throw new IllegalArgumentException("No price for " + security + " on " + date);

@@ -15,22 +15,17 @@
  */
 package pro.tremblay.core;
 
-import javax.annotation.Nonnull;
-import javax.annotation.concurrent.ThreadSafe;
 import java.math.BigDecimal;
 
 /**
  * Helper class to make it easier to create a {@code BigDecimal}.
  */
-@ThreadSafe
 public final class BigDecimalUtil {
 
-    @Nonnull
-    public static BigDecimal bd(@Nonnull String value) {
+    public static BigDecimal bd(String value) {
         return new BigDecimal(value);
     }
 
-    @Nonnull
     public static BigDecimal bd(int value) {
         return BigDecimal.valueOf(value);
     }

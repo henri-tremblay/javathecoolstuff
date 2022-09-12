@@ -15,8 +15,6 @@
  */
 package pro.tremblay.core;
 
-import javax.annotation.Nonnull;
-import javax.annotation.concurrent.ThreadSafe;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
@@ -28,7 +26,6 @@ import java.util.stream.Collectors;
 /**
  * Service reporting useful information on a position.
  */
-@ThreadSafe
 public class ReportingService {
 
     /**
@@ -48,8 +45,7 @@ public class ReportingService {
      * @param transactions all transactions on this position, they are not sorted and might be before the beginning of the year
      * @return annualized return on investment since beginning of the year
      */
-    @Nonnull
-    public BigDecimal calculateReturnOnInvestmentYTD(@Nonnull Position current, @Nonnull Collection<Transaction> transactions) {
+    public BigDecimal calculateReturnOnInvestmentYTD(Position current, Collection<Transaction> transactions) {
         LocalDate now = LocalDate.now();
         LocalDate beginningOfYear = now.withDayOfYear(1);
 
