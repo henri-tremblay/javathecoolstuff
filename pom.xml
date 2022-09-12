@@ -38,10 +38,9 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <!-- JUnit 5 can't be used. Pitest doesn't seem to support it -->
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-                <version>4.13.2</version>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter</artifactId>
+                <version>5.9.0</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -56,10 +55,7 @@
                 <version>4.3</version>
                 <scope>test</scope>
             </dependency>
-            <dependency>
-                <groupId>com.github.stefanbirkner</groupId>
-                <artifactId>system-rules</artifactId>
-                <version>1.19.0</version>
+                <version>3.23.1</version>
                 <scope>test</scope>
             </dependency>
         </dependencies>

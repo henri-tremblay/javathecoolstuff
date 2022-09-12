@@ -15,9 +15,9 @@
  */
 package pro.tremblay.core;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -27,7 +27,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static pro.tremblay.core.BigDecimalUtil.bd;
 
 public class ReportingServiceTest {
@@ -38,12 +38,12 @@ public class ReportingServiceTest {
             .cash(BigDecimal.ZERO)
             .securityPositions(new ArrayList<>());
 
-    @Before
+    @BeforeEach
     public void setup() {
         System.setProperty("LENGTH_OF_YEAR", "360");
     }
 
-    @After
+    @AfterEach
     public void after() {
         System.clearProperty("LENGTH_OF_YEAR");
     }
