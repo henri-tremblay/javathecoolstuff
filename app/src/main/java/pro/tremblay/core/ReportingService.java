@@ -28,6 +28,8 @@ import java.util.stream.Collectors;
  */
 public class ReportingService {
 
+    private final Preferences preferences = new Preferences();
+
     /**
      * Calculate the annualized return on investment since the beginning of the year (Year To Date). We use the simplest method
      * possible. We have the following
@@ -108,7 +110,7 @@ public class ReportingService {
                     .multiply(BigDecimal.valueOf(100L));
         }
 
-        int yearLength = Preferences.preferences().getInteger("LENGTH_OF_YEAR");
+        int yearLength = preferences.getInteger("LENGTH_OF_YEAR");
 
         roi = roi.multiply(BigDecimal.valueOf(yearLength)).divide(BigDecimal.valueOf(now.getDayOfYear()), 2, RoundingMode.HALF_UP);
 

@@ -23,15 +23,9 @@ import java.util.concurrent.ConcurrentMap;
  */
 public class Preferences {
 
-    private static final Preferences INSTANCE = new Preferences();
-
-    public static Preferences preferences() {
-        return INSTANCE;
-    }
-
     private final ConcurrentMap<String, String> preferences = new ConcurrentHashMap<>();
 
-    private Preferences() {}
+    public Preferences() {}
 
     public void put(String key, String value) {
         preferences.put(key, value);
