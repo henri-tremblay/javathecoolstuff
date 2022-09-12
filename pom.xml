@@ -49,12 +49,6 @@
                 <version>3.19.0</version>
                 <scope>test</scope>
             </dependency>
-            <dependency>
-                <groupId>org.easymock</groupId>
-                <artifactId>easymock</artifactId>
-                <version>4.3</version>
-                <scope>test</scope>
-            </dependency>
                 <version>3.23.1</version>
                 <scope>test</scope>
             </dependency>
