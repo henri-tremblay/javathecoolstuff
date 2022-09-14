@@ -18,8 +18,11 @@ package pro.tremblay.core;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -48,8 +51,11 @@ public class ReportingService {
      * @return annualized return on investment since beginning of the year
      */
     public BigDecimal calculateReturnOnInvestmentYTD(Position current, Collection<Transaction> transactions) {
-        LocalDate now = LocalDate.now();
-        LocalDate beginningOfYear = now.withDayOfYear(1);
+        GregorianCalendar now = new GregorianCalendar();
+        now.set(Calendar.DAY_OF_YEAR, 1);
+
+        GregorianCalendar beginningOfYear = new GregorianCalendar();
+        now.set(Calendar.DAY_OF_YEAR, 1);
 
         Position working = new Position()
                 .cash(current.getCash());
@@ -66,9 +72,9 @@ public class ReportingService {
                 .sorted(Comparator.comparing(Transaction::getDate).reversed())
                 .collect(Collectors.toList());
 
-        LocalDate today = now;
+        GregorianCalendar today = now;
         int transactionIndex = 0;
-        while (!today.isBefore(beginningOfYear)) {
+        while (!today.before(beginningOfYear)) {
             if (transactionIndex >= orderedTransaction.size())  {
                 break;
             }
@@ -83,7 +89,7 @@ public class ReportingService {
                 transaction = orderedTransaction.get(transactionIndex);
             }
 
-            today = today.minusDays(1);
+            today.add(Calendar.DAY_OF_YEAR, -1);
         }
 
         BigDecimal initialCashValue = working.getCash();
@@ -91,11 +97,11 @@ public class ReportingService {
 
         BigDecimal initialSecPosValue = working.getSecurityPositions()
                 .stream()
-                .map(securityPosition -> securityPosition.getQuantity().multiply(PriceService.getPrice(beginningOfYear, securityPosition.getSecurity())))
+                .map(securityPosition -> securityPosition.getQuantity().multiply(PriceService.getPrice(beginningOfYear.getTime(), securityPosition.getSecurity())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         BigDecimal currentSecPosValue = current.getSecurityPositions()
                 .stream()
-                .map(securityPosition -> securityPosition.getQuantity().multiply(PriceService.getPrice(now, securityPosition.getSecurity())))
+                .map(securityPosition -> securityPosition.getQuantity().multiply(PriceService.getPrice(now.getTime(), securityPosition.getSecurity())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         BigDecimal initialValue = initialCashValue.add(initialSecPosValue);
@@ -112,7 +118,7 @@ public class ReportingService {
 
         int yearLength = preferences.getInteger("LENGTH_OF_YEAR");
 
-        roi = roi.multiply(BigDecimal.valueOf(yearLength)).divide(BigDecimal.valueOf(now.getDayOfYear()), 2, RoundingMode.HALF_UP);
+        roi = roi.multiply(BigDecimal.valueOf(yearLength)).divide(BigDecimal.valueOf(now.get(Calendar.DAY_OF_YEAR)), 2, RoundingMode.HALF_UP);
 
         return roi;
     }

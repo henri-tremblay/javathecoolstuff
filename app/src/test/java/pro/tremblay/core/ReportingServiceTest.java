@@ -22,10 +22,14 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static pro.tremblay.core.BigDecimalUtil.bd;
@@ -62,7 +66,7 @@ public class ReportingServiceTest {
                 new Transaction()
                         .cash(bd(100))
                         .type(TransactionType.DEPOSIT)
-                        .date(LocalDate.now().minusDays(10)));
+                        .date(todayWithDelta(-10)));
 
         BigDecimal roi = reportingService.calculateReturnOnInvestmentYTD(current, transactions);
 
@@ -87,7 +91,7 @@ public class ReportingServiceTest {
             .quantity(bd(50))
             .cash(priceAtTransaction.multiply(bd(50)))
             .type(TransactionType.BUY)
-            .date(LocalDate.now().minusDays(10));
+            .date(todayWithDelta(10));
         Collection<Transaction> transactions = Collections.singleton(transaction);
 
         BigDecimal roi = reportingService.calculateReturnOnInvestmentYTD(current, transactions);
@@ -113,11 +117,11 @@ public class ReportingServiceTest {
             new Transaction()
                 .cash(bd(100))
                 .type(TransactionType.DEPOSIT)
-                .date(LocalDate.now().minusDays(10)),
+                .date(todayWithDelta(-10)),
             new Transaction()
                 .cash(bd(50))
                 .type(TransactionType.DEPOSIT)
-                .date(LocalDate.now().minusDays(9)));
+                .date(todayWithDelta(-9)));
 
         BigDecimal roi = reportingService.calculateReturnOnInvestmentYTD(current, transactions);
 
@@ -137,11 +141,11 @@ public class ReportingServiceTest {
             new Transaction()
                 .cash(bd(100))
                 .type(TransactionType.DEPOSIT)
-                .date(LocalDate.now().minusDays(10)),
+                .date(todayWithDelta(-10)),
             new Transaction()
                 .cash(bd(50))
                 .type(TransactionType.DEPOSIT)
-                .date(LocalDate.now().minusDays(10)));
+                .date(todayWithDelta(10)));
 
         BigDecimal roi = reportingService.calculateReturnOnInvestmentYTD(current, transactions);
 
@@ -151,5 +155,10 @@ public class ReportingServiceTest {
         BigDecimal actual = BigDecimal.valueOf((200.0 - 50.0) / 50.0 * 100.0 * 360.0 / LocalDate.now().getDayOfYear())
             .setScale(2, RoundingMode.HALF_UP);
         assertThat(roi).isEqualTo(actual);
+    }
+
+    private static Date todayWithDelta(int delta) {
+        ZoneId defaultZoneId = ZoneId.systemDefault();
+        return Date.from(LocalDate.now().atStartOfDay(defaultZoneId).plusDays(delta).toInstant());
     }
 }

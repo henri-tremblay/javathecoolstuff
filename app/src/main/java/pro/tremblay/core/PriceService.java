@@ -18,6 +18,8 @@ package pro.tremblay.core;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -64,6 +66,11 @@ public class PriceService {
             throw new IllegalArgumentException("No price for " + security + " on " + date);
         }
         return price;
+    }
+
+    public static BigDecimal getPrice(Date date, Security security) {
+        LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        return getPrice(localDate, security);
     }
 
     private PriceService() {}

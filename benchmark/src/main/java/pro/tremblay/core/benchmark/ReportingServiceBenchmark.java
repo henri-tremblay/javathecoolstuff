@@ -34,7 +34,9 @@ import pro.tremblay.core.TransactionType;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -76,10 +78,14 @@ public class ReportingServiceBenchmark {
         TransactionType[] transactionTypes = TransactionType.values();
 
         Random random = new Random();
+
+        ZoneId defaultZoneId = ZoneId.systemDefault();
+        Date date = Date.from(now.minusDays(random.nextInt(dayOfYear)).atStartOfDay(defaultZoneId).toInstant());
+
         transactions = random.ints(100, 1, 100)
             .mapToObj(quantity -> {
                 Transaction t = new Transaction();
-                return t.date(now.minusDays(random.nextInt(dayOfYear)))
+                return t.date(date)
                     .cash(BigDecimal.valueOf(random.nextInt(1_000)))
                     .type(transactionTypes[random.nextInt(transactionTypes.length)])
                     .quantity(t.getType().hasQuantity() ? BigDecimal.valueOf(quantity) : BigDecimal.ZERO)
