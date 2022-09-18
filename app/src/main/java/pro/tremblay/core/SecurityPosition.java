@@ -1,5 +1,5 @@
 /*
- * Copyright 2022-2022 the original author or authors.
+ * Copyright 2019-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,32 +15,36 @@
  */
 package pro.tremblay.core;
 
-import java.math.BigDecimal;
+import javax.annotation.Nonnull;
+import javax.annotation.concurrent.NotThreadSafe;
+import java.util.Objects;
 
 /**
  * Quantity possessed of a given security.
  */
+@NotThreadSafe
 public class SecurityPosition {
 
-    private Security security;
-    private BigDecimal quantity;
+    private final Security security;
+    private final Quantity quantity;
 
+    public static SecurityPosition securityPosition(Security security, Quantity quantity) {
+        return new SecurityPosition(security, quantity);
+    }
+
+    private SecurityPosition(Security security, Quantity quantity) {
+        this.security = security;
+        this.quantity = quantity;
+    }
+
+    @Nonnull
     public Security getSecurity() {
         return security;
     }
 
-    public SecurityPosition security(Security security) {
-        this.security = security;
-        return this;
-    }
-
-    public BigDecimal getQuantity() {
+    @Nonnull
+    public Quantity getQuantity() {
         return quantity;
-    }
-
-    public SecurityPosition quantity(BigDecimal quantity) {
-        this.quantity = quantity;
-        return this;
     }
 
     @Override
@@ -49,5 +53,26 @@ public class SecurityPosition {
             "security=" + security +
             ", quantity=" + quantity +
             '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        SecurityPosition that = (SecurityPosition) o;
+        return security == that.security && quantity.equals(that.quantity);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(security, quantity);
+    }
+
+    public boolean isFlat() {
+        return quantity.isZero();
     }
 }

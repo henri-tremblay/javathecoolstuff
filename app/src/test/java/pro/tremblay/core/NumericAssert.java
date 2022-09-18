@@ -15,16 +15,24 @@
  */
 package pro.tremblay.core;
 
-import javax.annotation.concurrent.ThreadSafe;
+import org.assertj.core.api.BigDecimalAssert;
 
-/**
- * Enumeration listing useful available security. In real-life it would be a full-fledged java object but to keep
- * things simple, it's just an enum.
- */
-@ThreadSafe
-public enum Security {
-    APPL,
-    GOOGL,
-    IBM,
-    INTC
+public class NumericAssert<T extends Numeric<T>> extends BigDecimalAssert {
+    private final Numeric<T> actualNumeric;
+
+    public NumericAssert(Numeric<T> actual) {
+        super(actual.value);
+        actualNumeric = actual;
+    }
+
+    public NumericAssert<T> isEqualTo(Numeric<T> expected) {
+        objects.assertEqual(info, actualNumeric, expected);
+        return this;
+    }
+
+    public NumericAssert<T> isNotEqualTo(Object other) {
+        objects.assertNotEqual(info, actualNumeric, other);
+        return this;
+    }
+
 }

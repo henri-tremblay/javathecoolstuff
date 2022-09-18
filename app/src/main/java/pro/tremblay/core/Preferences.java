@@ -1,5 +1,5 @@
 /*
- * Copyright 2022-2022 the original author or authors.
+ * Copyright 2019-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,35 +15,34 @@
  */
 package pro.tremblay.core;
 
+import javax.annotation.Nonnull;
+import javax.annotation.concurrent.ThreadSafe;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 /**
  * Global configuration of the application.
  */
+@ThreadSafe
 public class Preferences {
 
     private final ConcurrentMap<String, String> preferences = new ConcurrentHashMap<>();
 
-    public Preferences() {}
-
-    public void put(String key, String value) {
+    public void put(@Nonnull String key, @Nonnull String value) {
         preferences.put(key, value);
     }
 
-    public String getString(String key) {
+    @Nonnull
+    public String getString(@Nonnull String key) {
         String value = preferences.get(key);
-        if (value != null) {
-            return value;
-        }
-        return System.getProperty(key);
-    }
-
-    public int getInteger(String key) {
-        String value = getString(key);
         if (value == null) {
             throw new IllegalArgumentException(key + " is not a known preference");
         }
+        return value;
+    }
+
+    public int getInteger(@Nonnull String key) {
+        String value = getString(key);
         return Integer.parseInt(value);
     }
 }

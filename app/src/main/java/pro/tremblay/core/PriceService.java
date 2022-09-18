@@ -1,5 +1,5 @@
 /*
- * Copyright 2022-2022 the original author or authors.
+ * Copyright 2019-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,32 +15,33 @@
  */
 package pro.tremblay.core;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
+import javax.annotation.Nonnull;
+import javax.annotation.concurrent.ThreadSafe;
+import java.time.Clock;
 import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+
+import static pro.tremblay.core.Amount.amnt;
 
 /**
  * Service returning security prices. This is actually a fake implementation using randomly generated prices.
  */
+@ThreadSafe
 public class PriceService {
 
-    private static final ConcurrentMap<String, BigDecimal> prices = new ConcurrentHashMap<>();
+    private final Map<String, Amount> prices = new HashMap<>();
 
-    private static final Random random = new Random();
-
-    static {
+    public PriceService(@Nonnull Clock clock) {
         // Randomly generated price since the beginning of the year
-        LocalDate now = LocalDate.now();
+        Random random = new Random();
+        LocalDate now = LocalDate.now(clock);
         for (Security security : Security.values()) {
             LocalDate start = now.withDayOfYear(1);
-            BigDecimal price = BigDecimal.valueOf(100 + random.nextInt(200));
+            Amount price = amnt(100 + random.nextInt(200));
             while(!start.isAfter(now)) {
-                BigDecimal tick = BigDecimal.valueOf(random.nextGaussian()).setScale(2, RoundingMode.HALF_UP);
+                Amount tick = amnt(random.nextGaussian());
                 prices.put(getKey(security, start), price.add(tick));
                 start = start.plusDays(1);
             }
@@ -60,18 +61,12 @@ public class PriceService {
      * @throws IllegalArgumentException if no price is found at this date
      * @return the price of the security at a given date
      */
-    public static BigDecimal getPrice(LocalDate date, Security security) {
-        BigDecimal price = prices.get(getKey(security, date));
+    @Nonnull
+    public Amount getPrice(@Nonnull LocalDate date, @Nonnull Security security) {
+        Amount price = prices.get(getKey(security, date));
         if(price == null) {
-            throw new IllegalArgumentException("No price for " + security + " on " + date);
+            throw new IllegalArgumentException("No price found at " + date + " for " + security);
         }
         return price;
     }
-
-    public static BigDecimal getPrice(Date date, Security security) {
-        LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        return getPrice(localDate, security);
-    }
-
-    private PriceService() {}
 }

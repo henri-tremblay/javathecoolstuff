@@ -15,16 +15,27 @@
  */
 package pro.tremblay.core;
 
-import javax.annotation.concurrent.ThreadSafe;
+import org.junit.jupiter.api.Test;
 
-/**
- * Enumeration listing useful available security. In real-life it would be a full-fledged java object but to keep
- * things simple, it's just an enum.
- */
-@ThreadSafe
-public enum Security {
-    APPL,
-    GOOGL,
-    IBM,
-    INTC
+import java.math.BigDecimal;
+
+import static pro.tremblay.core.Assertions.assertThat;
+import static pro.tremblay.core.Quantity.qty;
+
+class QuantityTest {
+
+    @Test
+    void amountInteger() {
+        assertThat(qty(12L)).isEqualTo("12");
+    }
+
+    @Test
+    void amountBigDecimal() {
+        assertThat(qty(BigDecimal.valueOf(12))).isEqualTo("12");
+    }
+
+    @Test
+    void testToString() {
+        assertThat(qty(12).toString()).isEqualTo("12");
+    }
 }

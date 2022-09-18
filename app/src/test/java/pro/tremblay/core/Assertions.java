@@ -1,5 +1,5 @@
 /*
- * Copyright 2022-2022 the original author or authors.
+ * Copyright 2019-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,20 +15,9 @@
  */
 package pro.tremblay.core;
 
-import java.math.BigDecimal;
+public class Assertions extends org.assertj.core.api.Assertions{
 
-/**
- * Helper class to make it easier to create a {@code BigDecimal}.
- */
-public final class BigDecimalUtil {
-
-    public static BigDecimal bd(String value) {
-        return new BigDecimal(value);
+    public static <T extends Numeric<T>> NumericAssert<T> assertThat(Numeric<T> actual) {
+        return new NumericAssert<T>(actual);
     }
-
-    public static BigDecimal bd(int value) {
-        return BigDecimal.valueOf(value);
-    }
-
-    private BigDecimalUtil() {}
 }

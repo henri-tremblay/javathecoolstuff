@@ -1,5 +1,5 @@
 /*
- * Copyright 2022-2022 the original author or authors.
+ * Copyright 2019-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,38 +17,42 @@ package pro.tremblay.core;
 
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
-public class PreferencesTest {
+class PreferencesTest {
 
     private Preferences preferences = new Preferences();
 
     @Test
-    public void getString_unknownPreference() {
-        assertThat(preferences.getString("aaa")).isNull();
+    void getString_unknownPreference() {
+        assertThatIllegalArgumentException()
+            .isThrownBy(() -> preferences.getString("aaa"))
+            .withMessage("aaa is not a known preference");
     }
 
     @Test
-    public void getInteger_unknownPreference() {
+    void getInteger_unknownPreference() {
         assertThatIllegalArgumentException()
             .isThrownBy(() -> preferences.getInteger("aaa"))
             .withMessage("aaa is not a known preference");
     }
 
     @Test
-    public void getString() {
+    void getString() {
         preferences.put("a", "value");
         assertThat(preferences.getString("a")).isEqualTo("value");
     }
 
     @Test
-    public void getInteger() {
+    void getInteger() {
         preferences.put("a", "123");
         assertThat(preferences.getInteger("a")).isEqualTo(123);
     }
 
     @Test
-    public void getInteger_invalidNumber() {
+    void getInteger_invalidNumber() {
         preferences.put("a", "value");
         assertThatExceptionOfType(NumberFormatException.class)
             .isThrownBy(() -> preferences.getInteger("a"));

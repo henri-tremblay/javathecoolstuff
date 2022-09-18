@@ -1,5 +1,5 @@
 /*
- * Copyright 2022-2022 the original author or authors.
+ * Copyright 2019-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,25 +15,32 @@
  */
 package pro.tremblay.core;
 
-import java.math.BigDecimal;
+import javax.annotation.Nonnull;
+import javax.annotation.concurrent.NotThreadSafe;
 import java.time.LocalDate;
-import java.util.Date;
 
 /**
  * A transaction that happened on a position.
  */
+@NotThreadSafe
 public class Transaction {
 
     /** Type of transaction **/
     private TransactionType type;
-    /** Date at which the transaction occurred */
-    private Date date;
+    /** Date at which the transaction occured */
+    private LocalDate date;
     /** Amount of cash exchanged during the transaction. The amount is always positive, the side of the transaction is determined by its type */
-    private BigDecimal cash;
+    private Amount cash;
     /** Securities bought or sold if securities are involved in the transaction */
     private Security security;
     /** Quantity of securities exchanged during the transaction. The quantity is always positive, the side of the transaction is determined by its type */
-    private BigDecimal quantity;
+    private Quantity quantity;
+
+    public static Transaction transaction() {
+        return new Transaction();
+    }
+
+    private Transaction() {}
 
     public TransactionType getType() {
         return type;
@@ -44,20 +51,20 @@ public class Transaction {
         return this;
     }
 
-    public Date getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public Transaction date(Date date) {
+    public Transaction date(LocalDate date) {
         this.date = date;
         return this;
     }
 
-    public BigDecimal getCash() {
+    public Amount getCash() {
         return cash;
     }
 
-    public Transaction cash(BigDecimal cash) {
+    public Transaction cash(Amount cash) {
         this.cash = cash;
         return this;
     }
@@ -71,13 +78,17 @@ public class Transaction {
         return this;
     }
 
-    public BigDecimal getQuantity() {
+    public Quantity getQuantity() {
         return quantity;
     }
 
-    public Transaction quantity(BigDecimal quantity) {
+    public Transaction quantity(Quantity quantity) {
         this.quantity = quantity;
         return this;
+    }
+
+    public void revert(@Nonnull Position position) {
+        getType().revert(position, this);
     }
 
     @Override

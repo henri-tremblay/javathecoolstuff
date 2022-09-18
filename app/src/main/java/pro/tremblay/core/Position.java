@@ -1,5 +1,5 @@
 /*
- * Copyright 2022-2022 the original author or authors.
+ * Copyright 2019-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,41 +15,102 @@
  */
 package pro.tremblay.core;
 
-import java.math.BigDecimal;
+import javax.annotation.concurrent.NotThreadSafe;
+import java.time.LocalDate;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import static pro.tremblay.core.SecurityPosition.securityPosition;
 
 /**
  * All positions (cash and security) of a user. There is only one cash position since we are trading in only one
  * currency.
  */
+@NotThreadSafe
 public class Position {
 
-    private BigDecimal cash;
-    private Collection<SecurityPosition> securityPositions;
+    private Amount cash = Amount.zero();
+    private final Map<Security, Quantity> securityPositions = new HashMap<>();
 
-    public BigDecimal getCash() {
+    public static Position position() {
+        return new Position();
+    }
+
+    private Position() {}
+
+    public Position addSecurityPosition(Security security, Quantity quantity) {
+        securityPositions.compute(security, (sec, currentQuantity) -> {
+            if(currentQuantity == null) {
+                return quantity.isZero() ? null : quantity;
+            }
+            Quantity sum = quantity.add(currentQuantity);
+            return sum.isZero() ? null : sum;
+        });
+        return this;
+    }
+
+    public Quantity getSecurityPosition(Security security) {
+        return securityPositions.getOrDefault(security, Quantity.zero());
+    }
+
+    public void addCash(Amount cash) {
+        this.cash = this.cash.add(cash);
+    }
+
+    public Amount getCash() {
         return cash;
     }
 
-    public Position cash(BigDecimal cash) {
+    public Position cash(Amount cash) {
         this.cash = cash;
         return this;
     }
 
-    public Collection<SecurityPosition> getSecurityPositions() {
-        return securityPositions;
+    public Position addSecurityPositions(SecurityPosition... securityPositions) {
+        for (SecurityPosition sp : securityPositions) {
+            // No need to add flat positions
+            if (!sp.isFlat()) {
+                this.securityPositions.put(sp.getSecurity(), sp.getQuantity());
+            }
+        }
+        return this;
     }
 
-    public Position securityPositions(Collection<SecurityPosition> securityPositions) {
-        this.securityPositions = securityPositions;
-        return this;
+    public Position copy() {
+        Position position = position()
+                .cash(getCash());
+        position.securityPositions.putAll(securityPositions);
+        return position;
+    }
+
+    private List<Map.Entry<Security, Quantity>> sortedSecurityPositions() {
+        return securityPositions.entrySet().stream().sorted(Map.Entry.comparingByKey()).collect(Collectors.toList());
+    }
+
+    public Amount securityPositionValue(LocalDate date, PriceService priceService) {
+        return securityPositions
+            .entrySet()
+            .stream()
+            .map(entry -> priceService.getPrice(date, entry.getKey()).multiply(entry.getValue()))
+            .reduce(Amount.zero(), Numeric::add);
+    }
+
+    public Collection<SecurityPosition> getSecurityPositions() {
+        return securityPositions
+            .entrySet()
+            .stream()
+            .map(entry -> securityPosition(entry.getKey(), entry.getValue()))
+            .collect(Collectors.toList());
     }
 
     @Override
     public String toString() {
         return "Position{" +
             "cash=" + cash +
-            ", securityPositions=" + securityPositions +
+            ", securityPositions=" + sortedSecurityPositions() +
             '}';
     }
 }

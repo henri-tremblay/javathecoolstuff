@@ -1,5 +1,5 @@
 /*
- * Copyright 2022-2022 the original author or authors.
+ * Copyright 2019-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,15 +15,25 @@
  */
 package pro.tremblay.core;
 
+import javax.annotation.Nonnull;
+import javax.annotation.concurrent.ThreadSafe;
+
 /**
  * Type of transactions.
  */
+@ThreadSafe
 public enum TransactionType {
     /** Securities were bought using cash */
     BUY {
         @Override
         public boolean hasQuantity() {
             return true;
+        }
+
+        @Override
+        public void revert(@Nonnull Position position, @Nonnull Transaction transaction) {
+            position.addCash(transaction.getCash());
+            position.addSecurityPosition(transaction.getSecurity(), transaction.getQuantity().negate());
         }
     },
     /** Securities were sold to get cash */
@@ -32,6 +42,12 @@ public enum TransactionType {
         public boolean hasQuantity() {
             return true;
         }
+
+        @Override
+        public void revert(@Nonnull Position position, @Nonnull Transaction transaction) {
+            position.addCash(transaction.getCash().negate());
+            position.addSecurityPosition(transaction.getSecurity(), transaction.getQuantity());
+        }
     },
     /** Cash was added to the position */
     DEPOSIT {
@@ -39,12 +55,23 @@ public enum TransactionType {
         public boolean hasQuantity() {
             return false;
         }
+
+        @Override
+        public void revert(@Nonnull Position position, @Nonnull Transaction transaction) {
+            position.addCash(transaction.getCash().negate());
+        }
+
     },
     /** Cash was removed from the position */
     WITHDRAWAL {
         @Override
         public boolean hasQuantity() {
             return false;
+        }
+
+        @Override
+        public void revert(@Nonnull Position position, @Nonnull Transaction transaction) {
+            position.addCash(transaction.getCash());
         }
     };
 
@@ -54,4 +81,13 @@ public enum TransactionType {
      * @return if some security quantity was exchanged
      */
     public abstract boolean hasQuantity();
+
+    /**
+     * Revert a transaction from a position.
+     *
+     * @param position the position on which the transaction will be reverted
+     * @param transaction the transaction to revert
+     */
+    public abstract void revert(@Nonnull Position position, @Nonnull Transaction transaction);
+
 }

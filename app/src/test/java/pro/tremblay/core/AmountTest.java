@@ -1,5 +1,5 @@
 /*
- * Copyright 2022-2022 the original author or authors.
+ * Copyright 2019-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,19 +17,30 @@ package pro.tremblay.core;
 
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.*;
-import static pro.tremblay.core.BigDecimalUtil.bd;
+import java.math.BigDecimal;
 
-public class BigDecimalUtilTest {
+import static pro.tremblay.core.Amount.amnt;
+import static pro.tremblay.core.Assertions.assertThat;
+
+class AmountTest {
 
     @Test
-    public void bdInt() {
-        assertThat(bd(4)).isEqualTo("4");
+    void amountDouble() {
+        assertThat(amnt(12.1)).isEqualTo("12.10");
     }
 
     @Test
-    public void bdString() {
-        assertThat(bd("4.12")).isEqualTo("4.12");
+    void amountInteger() {
+        assertThat(amnt(12L)).isEqualTo("12.00");
     }
 
+    @Test
+    void amountBigDecimal() {
+        assertThat(amnt(BigDecimal.valueOf(12))).isEqualTo("12.00");
+    }
+
+    @Test
+    void testToString() {
+        assertThat(amnt("1.2").toString()).isEqualTo("1.20$");
+    }
 }
