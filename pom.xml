@@ -55,6 +55,12 @@
                 <version>3.23.1</version>
                 <scope>test</scope>
             </dependency>
+            <dependency>
+                <groupId>org.easymock</groupId>
+                <artifactId>easymock</artifactId>
+                <version>4.4-SNAPSHOT</version>
+                <scope>test</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
