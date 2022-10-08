@@ -36,8 +36,8 @@ public class ReportingService {
     private final Clock clock;
     private final PriceService priceService;
 
-    public ReportingService(@Nonnull Preferences preferences, @Nonnull Clock clock) {
-        this(preferences, clock, new PriceService(clock));
+    public ReportingService(@Nonnull Preferences preferences, @Nonnull SecurityService securityService, @Nonnull Clock clock) {
+        this(preferences, clock, new PriceService(securityService, clock));
     }
 
     public ReportingService(@Nonnull Preferences preferences, @Nonnull Clock clock, @Nonnull PriceService priceService) {

@@ -75,17 +75,17 @@ class ReportingServiceTest {
 
     @Test
     void calculateReturnOnInvestmentYTD_secBought() {
-        current.addSecurityPosition(Security.GOOGL, qty(50));
+        current.addSecurityPosition(SecuritiesForTest.GOOGL, qty(50));
 
         Collection<Transaction> transactions = Collections.singleton(
             transaction()
-                .security(Security.GOOGL)
+                .security(SecuritiesForTest.GOOGL)
                 .quantity(qty(50))
                 .cash(amnt(100))
                 .type(TransactionType.BUY)
                 .date(hundredDaysAgo));
 
-        expect(priceService.getPrice(today, Security.GOOGL)).andStubReturn(amnt(2));
+        expect(priceService.getPrice(today, SecuritiesForTest.GOOGL)).andStubReturn(amnt(2));
         replay(priceService);
 
         Percentage roi = reportingService.calculateReturnOnInvestmentYTD(current, transactions);
@@ -98,7 +98,7 @@ class ReportingServiceTest {
 
     @Test
     void testTwoArgsConstructor() {
-        new ReportingService(new Preferences(), Clock.systemDefaultZone());
+        new ReportingService(new Preferences(), new SecurityService(), Clock.systemDefaultZone());
     }
 
     @Test

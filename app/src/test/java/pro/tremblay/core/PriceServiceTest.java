@@ -26,14 +26,16 @@ import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException
 class PriceServiceTest {
 
     private Clock clock = Clock.systemDefaultZone();
-    private PriceService priceService = new PriceService(clock);
+
+    private SecurityService securityService = new SecurityService();
+    private PriceService priceService = new PriceService(securityService, clock);
 
     @Test
     void getPrice() {
         LocalDate now = LocalDate.now(clock);
         LocalDate date = now.withDayOfYear(1);
         while(!date.isAfter(now)) {
-            assertThat(priceService.getPrice(date, Security.GOOGL)).isNotNull();
+            assertThat(priceService.getPrice(date, SecuritiesForTest.GOOGL)).isNotNull();
             date = date.plusDays(1);
         }
     }
@@ -42,7 +44,7 @@ class PriceServiceTest {
     void getPrice_noPrice() {
         LocalDate yearsAgo = LocalDate.of(1977, 1, 1);
         assertThatIllegalArgumentException()
-            .isThrownBy(() -> priceService.getPrice(yearsAgo, Security.IBM))
+            .isThrownBy(() -> priceService.getPrice(yearsAgo, SecuritiesForTest.IBM))
             .withMessage("No price found at 1977-01-01 for IBM");
     }
 }

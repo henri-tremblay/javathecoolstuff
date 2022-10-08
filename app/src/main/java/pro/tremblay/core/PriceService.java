@@ -31,13 +31,14 @@ import static pro.tremblay.core.Amount.amnt;
 @ThreadSafe
 public class PriceService {
 
+    private SecurityService securityService;
     private final Map<String, Amount> prices = new HashMap<>();
 
-    public PriceService(@Nonnull Clock clock) {
+    public PriceService(@Nonnull SecurityService securityService, @Nonnull Clock clock) {
         // Randomly generated price since the beginning of the year
         Random random = new Random();
         LocalDate now = LocalDate.now(clock);
-        for (Security security : Security.values()) {
+        for (Security security : securityService.allSecurities()) {
             LocalDate start = now.withDayOfYear(1);
             Amount price = amnt(100 + random.nextInt(200));
             while(!start.isAfter(now)) {
@@ -65,7 +66,7 @@ public class PriceService {
     public Amount getPrice(@Nonnull LocalDate date, @Nonnull Security security) {
         Amount price = prices.get(getKey(security, date));
         if(price == null) {
-            throw new IllegalArgumentException("No price found at " + date + " for " + security);
+            throw new IllegalArgumentException("No price found at " + date + " for " + security.symbol());
         }
         return price;
     }

@@ -41,7 +41,7 @@ class TransactionRevertTest {
         Transaction transaction = transaction()
             .type(TransactionType.BUY)
             .cash(Amount.amnt(50))
-            .security(Security.GOOGL)
+            .security(SecuritiesForTest.GOOGL)
             .quantity(qty(20));
 
         transaction.revert(position);
@@ -49,7 +49,7 @@ class TransactionRevertTest {
         assertThat(position.getCash()).isEqualTo("150.00");
         assertThat(position.getSecurityPositions())
             .usingRecursiveFieldByFieldElementComparator()
-            .containsOnly(securityPosition(Security.GOOGL, qty(-20)));
+            .containsOnly(securityPosition(SecuritiesForTest.GOOGL, qty(-20)));
 
         // Do it again now that the position exists
         transaction.revert(position);
@@ -57,7 +57,7 @@ class TransactionRevertTest {
         assertThat(position.getCash()).isEqualTo("200.00");
         assertThat(position.getSecurityPositions())
             .usingRecursiveFieldByFieldElementComparator()
-            .containsOnly(securityPosition(Security.GOOGL, qty(-40)));
+            .containsOnly(securityPosition(SecuritiesForTest.GOOGL, qty(-40)));
     }
 
     @Test
@@ -65,7 +65,7 @@ class TransactionRevertTest {
         Transaction transaction = transaction()
             .type(TransactionType.SELL)
             .cash(Amount.amnt(30))
-            .security(Security.GOOGL)
+            .security(SecuritiesForTest.GOOGL)
             .quantity(qty(20));
 
         transaction.revert(position);
@@ -73,7 +73,7 @@ class TransactionRevertTest {
         assertThat(position.getCash()).isEqualTo("70.00");
         assertThat(position.getSecurityPositions())
             .usingRecursiveFieldByFieldElementComparator()
-            .containsOnly(securityPosition(Security.GOOGL, qty(20)));
+            .containsOnly(securityPosition(SecuritiesForTest.GOOGL, qty(20)));
 
         // Do it again now that the position exists
         transaction.revert(position);
@@ -81,7 +81,7 @@ class TransactionRevertTest {
         assertThat(position.getCash()).isEqualTo("40.00");
         assertThat(position.getSecurityPositions())
             .usingRecursiveFieldByFieldElementComparator()
-            .containsOnly(securityPosition(Security.GOOGL, qty(40)));
+            .containsOnly(securityPosition(SecuritiesForTest.GOOGL, qty(40)));
 
     }
 

@@ -87,7 +87,9 @@ public class Position {
     }
 
     private List<Map.Entry<Security, Quantity>> sortedSecurityPositions() {
-        return securityPositions.entrySet().stream().sorted(Map.Entry.comparingByKey()).collect(Collectors.toList());
+        return securityPositions.entrySet().stream()
+            .sorted(Map.Entry.comparingByKey())
+            .collect(Collectors.toList());
     }
 
     public Amount securityPositionValue(LocalDate date, PriceService priceService) {
