@@ -54,7 +54,7 @@ class SecurityPositionTest {
         assertThat(securityPosition).isEqualTo(newSecurityPosition);
         newSecurityPosition = securityPosition(SecuritiesForTest.GOOGL, Quantity.zero());
         assertThat(securityPosition).isNotEqualTo(newSecurityPosition);
-        newSecurityPosition = securityPosition(SecuritiesForTest.APPL, Quantity.ten());
+        newSecurityPosition = securityPosition(SecuritiesForTest.AAPL, Quantity.ten());
         assertThat(securityPosition).isNotEqualTo(newSecurityPosition);
     }
 }

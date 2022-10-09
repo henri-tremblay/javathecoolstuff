@@ -33,7 +33,7 @@ class PositionTest {
     private Position position = position()
         .cash(amnt(10))
         .addSecurityPosition(SecuritiesForTest.GOOGL, qty(22))
-        .addSecurityPosition(SecuritiesForTest.APPL, qty(11));
+        .addSecurityPosition(SecuritiesForTest.AAPL, qty(11));
 
     @Test
     void copy() {
@@ -71,7 +71,7 @@ class PositionTest {
 
         PriceService priceService = mock(PriceService.class);
         expect(priceService.getPrice(now, SecuritiesForTest.GOOGL)).andStubReturn(amnt(10));
-        expect(priceService.getPrice(now, SecuritiesForTest.APPL)).andStubReturn(amnt(5));
+        expect(priceService.getPrice(now, SecuritiesForTest.AAPL)).andStubReturn(amnt(5));
         replay(priceService);
 
         Amount result = position.securityPositionValue(now, priceService);
@@ -83,7 +83,7 @@ class PositionTest {
         LocalDate now = LocalDate.now();
 
         position = position()
-            .addSecurityPosition(SecuritiesForTest.APPL, qty(0));
+            .addSecurityPosition(SecuritiesForTest.AAPL, qty(0));
 
         PriceService priceService = mock(PriceService.class);
         replay(priceService);
@@ -102,7 +102,7 @@ class PositionTest {
 
     @Test
     void testToString() {
-        assertThat(position.toString()).isEqualTo("Position{cash=10.00$, securityPositions=[APPL=11, GOOGL=22]}");
+        assertThat(position.toString()).isEqualTo("Position{cash=10.00$, securityPositions=[AAPL=11, GOOGL=22]}");
     }
 
     @Test
@@ -113,6 +113,6 @@ class PositionTest {
         assertThat(position.getSecurityPosition(SecuritiesForTest.IBM)).isEqualTo("100");
         assertThat(position.getSecurityPosition(SecuritiesForTest.INTC)).isEqualTo("200");
         assertThat(position.getSecurityPosition(SecuritiesForTest.GOOGL)).isEqualTo("22");
-        assertThat(position.getSecurityPosition(SecuritiesForTest.APPL)).isEqualTo("11");
+        assertThat(position.getSecurityPosition(SecuritiesForTest.AAPL)).isEqualTo("11");
     }
 }
