@@ -86,12 +86,6 @@ public class Position {
         return position;
     }
 
-    private List<Map.Entry<Security, Quantity>> sortedSecurityPositions() {
-        return securityPositions.entrySet().stream()
-            .sorted(Map.Entry.comparingByKey())
-            .collect(Collectors.toList());
-    }
-
     public Amount securityPositionValue(LocalDate date, PriceService priceService) {
         return securityPositions
             .entrySet()
@@ -114,5 +108,12 @@ public class Position {
             "cash=" + cash +
             ", securityPositions=" + sortedSecurityPositions() +
             '}';
+    }
+
+    private List<Map.Entry<String, Quantity>> sortedSecurityPositions() {
+        return securityPositions.entrySet().stream()
+            .map(entry -> Map.entry(entry.getKey().symbol(), entry.getValue()))
+            .sorted(Map.Entry.comparingByKey())
+            .collect(Collectors.toList());
     }
 }

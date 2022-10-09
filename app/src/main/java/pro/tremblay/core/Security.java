@@ -24,7 +24,7 @@ import java.util.Objects;
  * things simple, it's just an enum.
  */
 @ThreadSafe
-public class Security implements Comparable<Security> {
+public class Security {
 
     private final String symbol;
     private final String name;
@@ -58,11 +58,6 @@ public class Security implements Comparable<Security> {
 
     public LocalDate ipoDate() {
         return ipoDate;
-    }
-
-    @Override
-    public int compareTo(Security o) {
-        return symbol.compareTo(o.symbol);
     }
 
     @Override
