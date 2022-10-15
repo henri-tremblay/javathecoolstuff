@@ -18,13 +18,16 @@ package pro.tremblay.core;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.ThreadSafe;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Objects;
 
 @ThreadSafe
-public final class Percentage extends Numeric<Percentage> {
+public final class Percentage implements Numeric<Percentage> {
 
     private static final Percentage HUNDRED = pct("100");
     private static final Percentage ZERO = pct("0");
+
+    private final BigDecimal value;
 
     public static Percentage hundred() {
         return HUNDRED;
@@ -47,11 +50,12 @@ public final class Percentage extends Numeric<Percentage> {
     }
 
     private Percentage(@Nonnull BigDecimal value) {
-        super(value);
+        this.value = setScale(value);
     }
 
+    @Nonnull
     @Override
-    protected Percentage fromValue(@Nonnull BigDecimal newValue) {
+    public Percentage fromValue(@Nonnull BigDecimal newValue) {
         return new Percentage(newValue);
     }
 
@@ -62,6 +66,25 @@ public final class Percentage extends Numeric<Percentage> {
 
     @Override
     public String toString() {
-        return super.toString() + "%";
+        return value.toPlainString() + "%";
+    }
+
+    @Nonnull
+    @Override
+    public BigDecimal toBigDecimal() {
+        return value;
+    }
+
+    /**
+     * Scale this numerator to another denominator. E.g. if this is "3" on "4" ("from" param)
+     * and we want to scale to "8" ("to" param), we expect 3 x 8 / 4 = 6 as a result.
+     *
+     * @param from denominator from which to start
+     * @param to denominator to go to
+     * @return the numerator scaling to another denominator
+     */
+    public Percentage scale(int from, int to) {
+        return fromValue(value.multiply(BigDecimal.valueOf(to))
+            .divide(BigDecimal.valueOf(from), 2, RoundingMode.HALF_UP));
     }
 }

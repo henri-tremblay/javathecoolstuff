@@ -91,7 +91,7 @@ public class Position {
             .entrySet()
             .stream()
             .map(entry -> priceService.getPrice(date, entry.getKey()).multiply(entry.getValue()))
-            .reduce(Amount.zero(), Numeric::add);
+            .reduce(Amount.zero(), Amount::add);
     }
 
     public Collection<SecurityPosition> getSecurityPositions() {

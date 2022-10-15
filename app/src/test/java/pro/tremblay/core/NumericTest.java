@@ -19,18 +19,29 @@ import org.junit.jupiter.api.Test;
 
 import javax.annotation.Nonnull;
 import java.math.BigDecimal;
+import java.util.Objects;
 
 import static pro.tremblay.core.Assertions.assertThat;
 
 class NumericTest {
 
-    private static class ANumeric extends Numeric<ANumeric> {
-        protected ANumeric(@Nonnull BigDecimal value) {
-            super(value);
+    private static class ANumeric implements Numeric<ANumeric> {
+
+        private final BigDecimal value;
+
+        public ANumeric(@Nonnull BigDecimal value) {
+            this.value = setScale(value);
         }
 
+        @Nonnull
         @Override
-        protected ANumeric fromValue(@Nonnull BigDecimal newValue) {
+        public BigDecimal toBigDecimal() {
+            return value;
+        }
+
+        @Nonnull
+        @Override
+        public ANumeric fromValue(@Nonnull BigDecimal newValue) {
             return new ANumeric(newValue);
         }
 
@@ -38,11 +49,28 @@ class NumericTest {
         public int precision() {
             return 1;
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            ANumeric aNumeric = (ANumeric) o;
+            return value.equals(aNumeric.value);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(value);
+        }
+
+        @Override
+        public String toString() {
+            return value.toPlainString();
+        }
     }
 
     ANumeric a1 = n("1.2");
-    ANumeric a2 = n("1.2");
-    ANumeric a3 = n("1.3");
+    ANumeric a2 = n("1.3");
 
     private ANumeric n(String s) {
         return new ANumeric(new BigDecimal(s));
@@ -61,12 +89,12 @@ class NumericTest {
 
     @Test
     void add() {
-        assertThat(a1.add(a3)).isEqualTo("2.5");
+        assertThat(a1.add(a2)).isEqualTo("2.5");
     }
 
     @Test
-    void substract() {
-        assertThat(a3.substract(a1)).isEqualTo("0.1");
+    void subtract() {
+        assertThat(a2.subtract(a1)).isEqualTo("0.1");
     }
 
     @Test
@@ -80,16 +108,8 @@ class NumericTest {
     }
 
     @Test
-    void testEquals() {
-        assertThat(a1).isEqualTo(a1);
-        assertThat(a1).isEqualTo(a2);
-        assertThat(a1).isNotEqualTo(a3);
-        assertThat(a1).isNotEqualTo(null);
-        assertThat(a1).isNotEqualTo("");
-    }
-
-    @Test
-    void testHashCode() {
-        assertThat(a1.hashCode()).isEqualTo(a2.hashCode());
+    void setScale() {
+        assertThat(new ANumeric(new BigDecimal("1.234"))).isEqualTo("1.2");
+        assertThat(new ANumeric(new BigDecimal("1.254"))).isEqualTo("1.3");
     }
 }

@@ -15,13 +15,21 @@ import java.util.function.Function;
 
 public class SecurityService {
 
+    private final Path file;
     private final Object mutex = new Object();
     private volatile List<Security> allSecurities;
+
+    public SecurityService(Path file) {
+        if (!file.toFile().exists()) {
+            throw new IllegalArgumentException("Securities file doesn't exist");
+        }
+        this.file = file;
+    }
 
     public List<Security> allSecurities() {
         if (allSecurities == null) {
             synchronized (mutex) {
-                allSecurities = readFile(Path.of("../listing_status.csv"), line -> {
+                allSecurities = readFile(file, line -> {
                     String[] fields = line.split(",");
                     return new Security(
                         fields[0],

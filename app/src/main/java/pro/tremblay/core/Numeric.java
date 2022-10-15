@@ -16,41 +16,34 @@
 package pro.tremblay.core;
 
 import javax.annotation.Nonnull;
-import javax.annotation.concurrent.ThreadSafe;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Objects;
 
-@ThreadSafe
-public abstract class Numeric<T extends Numeric<T>> {
-    protected final BigDecimal value;
+public interface Numeric<T extends Numeric<T>> {
 
-    protected Numeric(@Nonnull BigDecimal value) {
-        this.value = value.setScale(precision(), RoundingMode.HALF_UP);
+    @Nonnull
+    BigDecimal toBigDecimal();
+
+    @Nonnull
+    T fromValue(@Nonnull BigDecimal newValue);
+
+    int precision();
+
+    default T add(@Nonnull T numeric) {
+        return fromValue(toBigDecimal().add(numeric.toBigDecimal()));
     }
 
-    protected abstract T fromValue(@Nonnull BigDecimal newValue);
-
-    public abstract int precision();
-
-    public T add(@Nonnull T numeric) {
-        return fromValue(value.add(numeric.value));
+    default T subtract(@Nonnull T numeric) {
+        return fromValue(toBigDecimal().subtract(numeric.toBigDecimal()));
     }
 
-    public T substract(@Nonnull T numeric) {
-        return fromValue(value.subtract(numeric.value));
+    default boolean isZero() {
+        return toBigDecimal().signum() == 0;
     }
 
-    public BigDecimal toBigDecimal() {
-        return value;
-    }
-
-    public boolean isZero() {
-        return value.signum() == 0;
-    }
-
-    public T negate() {
-        return fromValue(value.negate());
+    default T negate() {
+        return fromValue(toBigDecimal().negate());
     }
 
     /**
@@ -61,30 +54,13 @@ public abstract class Numeric<T extends Numeric<T>> {
      * @param to denominator to go to
      * @return the numerator scaling to another denominator
      */
-    public T scale(int from, int to) {
-        return fromValue(value.multiply(BigDecimal.valueOf(to))
+    default T scale(int from, int to) {
+        return fromValue(toBigDecimal().multiply(BigDecimal.valueOf(to))
             .divide(BigDecimal.valueOf(from), 2, RoundingMode.HALF_UP));
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        Numeric<?> numeric = (Numeric<?>) o;
-        return value.equals(numeric.value);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(value);
-    }
-
-    @Override
-    public String toString() {
-        return toBigDecimal().toPlainString();
+    @Nonnull
+    default BigDecimal setScale(@Nonnull BigDecimal value) {
+        return Objects.requireNonNull(value).setScale(precision(), RoundingMode.HALF_UP);
     }
 }

@@ -97,8 +97,8 @@ class ReportingServiceTest {
     }
 
     @Test
-    void testTwoArgsConstructor() {
-        new ReportingService(new Preferences(), new SecurityService(), Clock.systemDefaultZone());
+    void testThreeArgsConstructor() {
+        new ReportingService(preferences, clock, priceService);
     }
 
     @Test

@@ -21,10 +21,12 @@ import java.math.BigDecimal;
 import java.util.Objects;
 
 @ThreadSafe
-public class Quantity extends Numeric<Quantity> {
+public class Quantity implements Numeric<Quantity> {
 
     private static final Quantity ZERO = new Quantity(BigDecimal.ZERO);
     private static final Quantity TEN = qty(10);
+
+    private final BigDecimal value;
 
     public static Quantity zero() {
         return ZERO;
@@ -43,16 +45,27 @@ public class Quantity extends Numeric<Quantity> {
     }
 
     private Quantity(@Nonnull BigDecimal value) {
-        super(value);
+        this.value = value;
     }
 
+    @Nonnull
     @Override
-    protected Quantity fromValue(@Nonnull BigDecimal newValue) {
+    public Quantity fromValue(@Nonnull BigDecimal newValue) {
         return new Quantity(newValue);
     }
 
-    @Override
     public int precision() {
         return 0;
+    }
+
+    @Nonnull
+    @Override
+    public BigDecimal toBigDecimal() {
+        return value;
+    }
+
+    @Override
+    public String toString() {
+        return value.toPlainString();
     }
 }

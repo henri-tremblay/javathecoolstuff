@@ -15,20 +15,32 @@
  */
 package pro.tremblay.core;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.mock;
+import static org.easymock.EasyMock.replay;
 
 class PriceServiceTest {
 
     private Clock clock = Clock.systemDefaultZone();
 
-    private SecurityService securityService = new SecurityService();
-    private PriceService priceService = new PriceService(securityService, clock);
+    private SecurityService securityService = mock(SecurityService.class);
+    private PriceService priceService;
+
+    @BeforeEach
+    public void before() {
+        expect(securityService.allSecurities()).andStubReturn(SecuritiesForTest.SECURITIES);
+        replay(securityService);
+        priceService = new PriceService(securityService, clock);
+    }
 
     @Test
     void getPrice() {

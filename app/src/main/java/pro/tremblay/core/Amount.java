@@ -22,9 +22,11 @@ import java.util.Objects;
 
 import static pro.tremblay.core.Percentage.pct;
 
-public final class Amount extends Numeric<Amount> {
+public final class Amount implements Numeric<Amount> {
 
     private static final Amount ZERO = new Amount(BigDecimal.ZERO);
+
+    private final BigDecimal value;
 
     public static Amount zero() {
         return ZERO;
@@ -47,11 +49,17 @@ public final class Amount extends Numeric<Amount> {
     }
 
     private Amount(@Nonnull BigDecimal value) {
-        super(value);
+        this.value = setScale(value);
+    }
+
+    @Nonnull
+    @Override
+    public BigDecimal toBigDecimal() {
+        return value;
     }
 
     @Override
-    protected Amount fromValue(@Nonnull BigDecimal newValue) {
+    public @Nonnull Amount fromValue(@Nonnull BigDecimal newValue) {
         return new Amount(newValue);
     }
 
@@ -62,12 +70,12 @@ public final class Amount extends Numeric<Amount> {
     }
 
     public Amount multiply(Quantity quantity) {
-        return new Amount(value.multiply(quantity.value));
+        return new Amount(value.multiply(quantity.toBigDecimal()));
     }
 
     @Override
     public String toString() {
-        return super.toString() + "$";
+        return value.toPlainString() + "$";
     }
 
     public Percentage asRatioOf(Amount initialValue) {
@@ -75,4 +83,5 @@ public final class Amount extends Numeric<Amount> {
             .divide(initialValue.value, 10, RoundingMode.HALF_UP)
             .multiply(Percentage.hundred().toBigDecimal()));
     }
+
 }

@@ -31,7 +31,6 @@ import static pro.tremblay.core.Amount.amnt;
 @ThreadSafe
 public class PriceService {
 
-    private SecurityService securityService;
     private final Map<String, Amount> prices = new HashMap<>();
 
     public PriceService(@Nonnull SecurityService securityService, @Nonnull Clock clock) {
