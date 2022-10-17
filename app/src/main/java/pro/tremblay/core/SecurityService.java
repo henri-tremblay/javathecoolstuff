@@ -59,6 +59,12 @@ public class SecurityService {
         return allSecurities;
     }
 
+    public void clear() {
+        synchronized (mutex) {
+            allSecurities = null;
+        }
+    }
+
     private <T> List<T> readFile(Path file, Function<String, T> mapper) {
         BufferedReader in;
         try {
