@@ -41,6 +41,8 @@ public class Main {
             .replace("${roi}", roi.toString())
             .replace("${now}", LocalDateTime.now(clock).toString());
         Files.write(Paths.get("result.html"), result.getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+
+        System.out.println(result);
     }
 
 }
