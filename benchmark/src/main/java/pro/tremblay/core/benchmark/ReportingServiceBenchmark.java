@@ -46,11 +46,11 @@ import static pro.tremblay.core.Position.position;
 import static pro.tremblay.core.Quantity.qty;
 import static pro.tremblay.core.SecurityPosition.securityPosition;
 
-@BenchmarkMode(Mode.Throughput)
-@OutputTimeUnit(TimeUnit.MILLISECONDS)
-@Warmup(iterations = 10, time = 1)
+@BenchmarkMode(Mode.AverageTime)
+@OutputTimeUnit(TimeUnit.SECONDS)
+@Warmup(iterations = 5, time = 1)
 @Measurement(iterations = 5, time = 2)
-@Fork(2)
+@Fork(1)
 @State(Scope.Benchmark)
 public class ReportingServiceBenchmark {
 
