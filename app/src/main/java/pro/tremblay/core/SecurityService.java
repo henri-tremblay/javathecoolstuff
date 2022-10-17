@@ -25,6 +25,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 
@@ -32,7 +33,7 @@ public class SecurityService {
 
     private final Path file;
     private final Object mutex = new Object();
-    private volatile List<Security> allSecurities;
+    private volatile Collection<Security> allSecurities;
 
     public SecurityService(Path file) {
         if (!file.toFile().exists()) {
@@ -41,7 +42,7 @@ public class SecurityService {
         this.file = file;
     }
 
-    public List<Security> allSecurities() {
+    public Collection<Security> allSecurities() {
         if (allSecurities == null) {
             synchronized (mutex) {
                 if (allSecurities == null) {
@@ -74,7 +75,7 @@ public class SecurityService {
             .orElse(null);
     }
 
-    private <T> List<T> readFile(Path file, Function<String, T> mapper) {
+    private Collection<Security> readFile(Path file, Function<String, Security> mapper) {
         BufferedReader in;
         try {
             in = new BufferedReader(new InputStreamReader(new FileInputStream(file.toFile()), Charset.forName("UTF-8")));
@@ -83,7 +84,7 @@ public class SecurityService {
             throw new UncheckedIOException(e);
         }
         try {
-            List<T> list = new ArrayList<>();
+            List<Security> list = new ArrayList<>();
             String s = in.readLine(); // skip first line
             while((s = in.readLine()) != null) {
                 list.add(mapper.apply(s));
