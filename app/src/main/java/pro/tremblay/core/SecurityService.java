@@ -64,6 +64,13 @@ public class SecurityService {
         }
     }
 
+    public Security findForTicker(String ticker) {
+        return allSecurities().stream()
+            .filter(security -> security.symbol().equals(ticker)) // yeah, O(n). I know
+            .findAny()
+            .orElse(null);
+    }
+
     private <T> List<T> readFile(Path file, Function<String, T> mapper) {
         try {
             return Files.lines(file)
