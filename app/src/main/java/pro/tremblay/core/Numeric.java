@@ -23,7 +23,7 @@ import java.util.Objects;
 public interface Numeric<T extends Numeric<T>> {
 
     @Nonnull
-    BigDecimal toBigDecimal();
+    BigDecimal value();
 
     @Nonnull
     T fromValue(@Nonnull BigDecimal newValue);
@@ -31,19 +31,19 @@ public interface Numeric<T extends Numeric<T>> {
     int precision();
 
     default T add(@Nonnull T numeric) {
-        return fromValue(toBigDecimal().add(numeric.toBigDecimal()));
+        return fromValue(value().add(numeric.value()));
     }
 
     default T subtract(@Nonnull T numeric) {
-        return fromValue(toBigDecimal().subtract(numeric.toBigDecimal()));
+        return fromValue(value().subtract(numeric.value()));
     }
 
     default boolean isZero() {
-        return toBigDecimal().signum() == 0;
+        return value().signum() == 0;
     }
 
     default T negate() {
-        return fromValue(toBigDecimal().negate());
+        return fromValue(value().negate());
     }
 
     /**
@@ -55,7 +55,7 @@ public interface Numeric<T extends Numeric<T>> {
      * @return the numerator scaling to another denominator
      */
     default T scale(int from, int to) {
-        return fromValue(toBigDecimal().multiply(BigDecimal.valueOf(to))
+        return fromValue(value().multiply(BigDecimal.valueOf(to))
             .divide(BigDecimal.valueOf(from), 2, RoundingMode.HALF_UP));
     }
 

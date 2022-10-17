@@ -21,7 +21,7 @@ public class NumericAssert<T extends Numeric<T>> extends BigDecimalAssert {
     private final Numeric<T> actualNumeric;
 
     public NumericAssert(Numeric<T> actual) {
-        super(actual.toBigDecimal());
+        super(actual.value());
         actualNumeric = actual;
     }
 

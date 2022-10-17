@@ -71,7 +71,7 @@ public final class Percentage implements Numeric<Percentage> {
 
     @Nonnull
     @Override
-    public BigDecimal toBigDecimal() {
+    public BigDecimal value() {
         return value;
     }
 

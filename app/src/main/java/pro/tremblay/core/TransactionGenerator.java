@@ -53,9 +53,9 @@ public class TransactionGenerator {
                 out.write(",");
                 out.write(transaction.getDate().toString());
                 out.write(",");
-                out.write(transaction.getCash().toBigDecimal().toPlainString());
+                out.write(transaction.getCash().value().toPlainString());
                 out.write(",");
-                out.write(transaction.getQuantity() == null ? "" : transaction.getQuantity().toBigDecimal().toPlainString());
+                out.write(transaction.getQuantity() == null ? "" : transaction.getQuantity().value().toPlainString());
                 out.write(",");
                 out.write(transaction.getSecurity() == null ? "" : transaction.getSecurity().symbol());
                 out.newLine();

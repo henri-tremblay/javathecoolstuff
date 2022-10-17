@@ -35,7 +35,7 @@ class NumericTest {
 
         @Nonnull
         @Override
-        public BigDecimal toBigDecimal() {
+        public BigDecimal value() {
             return value;
         }
 

@@ -54,7 +54,7 @@ public final class Amount implements Numeric<Amount> {
 
     @Nonnull
     @Override
-    public BigDecimal toBigDecimal() {
+    public BigDecimal value() {
         return value;
     }
 
@@ -70,7 +70,7 @@ public final class Amount implements Numeric<Amount> {
     }
 
     public Amount multiply(Quantity quantity) {
-        return new Amount(value.multiply(quantity.toBigDecimal()));
+        return new Amount(value.multiply(quantity.value()));
     }
 
     @Override
@@ -81,7 +81,7 @@ public final class Amount implements Numeric<Amount> {
     public Percentage asRatioOf(Amount initialValue) {
         return pct(value.subtract(initialValue.value)
             .divide(initialValue.value, 10, RoundingMode.HALF_UP)
-            .multiply(Percentage.hundred().toBigDecimal()));
+            .multiply(Percentage.hundred().value()));
     }
 
 }

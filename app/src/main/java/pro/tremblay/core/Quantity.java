@@ -64,7 +64,7 @@ public class Quantity implements Numeric<Quantity> {
 
     @Nonnull
     @Override
-    public BigDecimal toBigDecimal() {
+    public BigDecimal value() {
         return value;
     }
 
