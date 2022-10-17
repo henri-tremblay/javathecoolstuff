@@ -22,11 +22,9 @@ import java.util.Objects;
 
 import static pro.tremblay.core.Percentage.pct;
 
-public final class Amount implements Numeric<Amount> {
+public record Amount(@Nonnull BigDecimal value) implements Numeric<Amount> {
 
     private static final Amount ZERO = new Amount(BigDecimal.ZERO);
-
-    private final BigDecimal value;
 
     public static Amount zero() {
         return ZERO;
@@ -48,14 +46,8 @@ public final class Amount implements Numeric<Amount> {
         return new Amount(new BigDecimal(Objects.requireNonNull(value)));
     }
 
-    private Amount(@Nonnull BigDecimal value) {
-        this.value = setScale(value);
-    }
-
-    @Nonnull
-    @Override
-    public BigDecimal value() {
-        return value;
+    public Amount {
+        value = setScale(value);
     }
 
     @Override
@@ -84,20 +76,4 @@ public final class Amount implements Numeric<Amount> {
             .multiply(Percentage.hundred().value()));
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof Amount)) {
-            return false;
-        }
-        Amount a = (Amount) o;
-        return value.equals(a.value);
-    }
-
-    @Override
-    public int hashCode() {
-        return value.hashCode();
-    }
 }

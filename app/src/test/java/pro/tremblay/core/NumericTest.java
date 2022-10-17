@@ -19,24 +19,15 @@ import org.junit.jupiter.api.Test;
 
 import javax.annotation.Nonnull;
 import java.math.BigDecimal;
-import java.util.Objects;
 
 import static pro.tremblay.core.Assertions.assertThat;
 
 class NumericTest {
 
-    private static class ANumeric implements Numeric<ANumeric> {
+    private record ANumeric(@Nonnull BigDecimal value) implements Numeric<ANumeric> {
 
-        private final BigDecimal value;
-
-        public ANumeric(@Nonnull BigDecimal value) {
-            this.value = setScale(value);
-        }
-
-        @Nonnull
-        @Override
-        public BigDecimal value() {
-            return value;
+        public ANumeric {
+            value = setScale(value);
         }
 
         @Nonnull
@@ -48,19 +39,6 @@ class NumericTest {
         @Override
         public int precision() {
             return 1;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            ANumeric aNumeric = (ANumeric) o;
-            return value.equals(aNumeric.value);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(value);
         }
 
         @Override

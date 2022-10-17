@@ -22,12 +22,10 @@ import java.math.RoundingMode;
 import java.util.Objects;
 
 @ThreadSafe
-public final class Percentage implements Numeric<Percentage> {
+public record Percentage(@Nonnull BigDecimal value) implements Numeric<Percentage> {
 
     private static final Percentage HUNDRED = pct("100");
     private static final Percentage ZERO = pct("0");
-
-    private final BigDecimal value;
 
     public static Percentage hundred() {
         return HUNDRED;
@@ -49,8 +47,8 @@ public final class Percentage implements Numeric<Percentage> {
         return new Percentage(Objects.requireNonNull(value));
     }
 
-    private Percentage(@Nonnull BigDecimal value) {
-        this.value = setScale(value);
+    public Percentage {
+        value = setScale(value);
     }
 
     @Nonnull
@@ -69,12 +67,6 @@ public final class Percentage implements Numeric<Percentage> {
         return value.toPlainString() + "%";
     }
 
-    @Nonnull
-    @Override
-    public BigDecimal value() {
-        return value;
-    }
-
     /**
      * Scale this numerator to another denominator. E.g. if this is "3" on "4" ("from" param)
      * and we want to scale to "8" ("to" param), we expect 3 x 8 / 4 = 6 as a result.
@@ -88,20 +80,4 @@ public final class Percentage implements Numeric<Percentage> {
             .divide(BigDecimal.valueOf(from), 2, RoundingMode.HALF_UP));
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof Percentage)) {
-            return false;
-        }
-        Percentage a = (Percentage) o;
-        return value.equals(a.value);
-    }
-
-    @Override
-    public int hashCode() {
-        return value.hashCode();
-    }
 }
