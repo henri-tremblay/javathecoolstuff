@@ -16,7 +16,6 @@
 package pro.tremblay.core;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
@@ -26,16 +25,17 @@ import java.util.Collection;
 
 public class Main {
 
-    private static final String TEMPLATE = "<!DOCTYPE html>\n" +
-        "<html lang=\"en\">\n" +
-        "<head>\n" +
-        "    <meta charset=\"UTF-8\">\n" +
-        "    <title>Return on investment</title>\n" +
-        "</head>\n" +
-        "<body>\n" +
-        "Your current return on investment as of ${now} is: ${roi}\n" +
-        "</body>\n" +
-        "</html>";
+    private static final String TEMPLATE = """
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <title>Return on investment</title>
+        </head>
+        <body>
+        Your current return on investment as of ${now} is: ${roi}
+        </body>
+        </html>""";
 
     public static void main(String[] args) throws IOException {
         Preferences preferences = new Preferences();
@@ -55,7 +55,7 @@ public class Main {
         String result = TEMPLATE
             .replace("${roi}", roi.toString())
             .replace("${now}", LocalDateTime.now(clock).toString());
-        Files.write(Paths.get("result.html"), result.getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+        Files.writeString(Paths.get("result.html"), result, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
 
         System.out.println(result);
     }
