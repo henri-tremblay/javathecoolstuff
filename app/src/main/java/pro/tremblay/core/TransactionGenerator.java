@@ -22,12 +22,12 @@ import java.nio.file.StandardOpenOption;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
+import java.util.random.RandomGenerator;
 
 public class TransactionGenerator {
 
     public static void main(String[] args) throws Exception {
-        Random random = new Random();
+        RandomGenerator random = RandomGenerator.getDefault();
         SecurityService securityService = new SecurityService(Paths.get("listing_status.csv"));
 
         List<Security> securities = new ArrayList<>(securityService.allSecurities());
@@ -39,10 +39,10 @@ public class TransactionGenerator {
                 Transaction transaction = Transaction.transaction()
                     .type(TransactionType.values()[random.nextInt(TransactionType.values().length)])
                     .date(now.minusDays(random.nextInt(365)))
-                    .cash(Amount.amnt(1_000 + random.nextInt( 9_000))); // some transactions will be before this year
+                    .cash(Amount.amnt(random.nextInt(1_000,  10_000))); // some transactions will be before this year
 
                 if (transaction.getType().hasQuantity()) {
-                    transaction.quantity(Quantity.qty(10 + random.nextInt( 9_990)));
+                    transaction.quantity(Quantity.qty(random.nextInt(10, 10_000)));
                     transaction.security(securities.get(random.nextInt(securities.size())));
                 }
 
