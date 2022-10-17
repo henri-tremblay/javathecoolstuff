@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.time.Clock;
+import java.time.LocalDateTime;
 import java.util.Collection;
 
 public class Main {
@@ -17,7 +18,7 @@ public class Main {
         "    <title>Return on investment</title>\n" +
         "</head>\n" +
         "<body>\n" +
-        "And you return is: ${roi}\n" +
+        "Your current return on investment as of ${now} is: ${roi}\n" +
         "</body>\n" +
         "</html>";
 
@@ -36,7 +37,9 @@ public class Main {
         Position current = Position.position().cash(Amount.amnt(10_000));
 
         Percentage roi = reportingService.calculateReturnOnInvestmentYTD(current, transactions);
-        String result = TEMPLATE.replace("${roi}", roi.toString());
+        String result = TEMPLATE
+            .replace("${roi}", roi.toString())
+            .replace("${now}", LocalDateTime.now(clock).toString());
         Files.write(Paths.get("result.html"), result.getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
     }
 
