@@ -60,11 +60,10 @@ public class SecurityPosition {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (!(o instanceof SecurityPosition that)) {
             return false;
         }
-        SecurityPosition that = (SecurityPosition) o;
-        return security == that.security && quantity.equals(that.quantity);
+        return security.equals(that.security) && quantity.equals(that.quantity);
     }
 
     @Override
