@@ -22,7 +22,6 @@ import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Service reporting useful information on a position.
@@ -120,8 +119,8 @@ public class ReportingService {
 
     private List<Transaction> antichronologicalOrderedTransactions(@Nonnull Collection<Transaction> transactions) {
         return transactions.stream()
-            .sorted(Comparator.comparing(Transaction::getDate).reversed())
-            .collect(Collectors.toList());
+                .sorted(Comparator.comparing(Transaction::getDate).reversed())
+                .toList();
     }
 
 }
