@@ -44,4 +44,14 @@ class QuantityTest {
         assertThat(qty(12).toString()).isEqualTo("12");
     }
 
+    @Test
+    void testEquals() {
+        assertThat(qty("12.4").equals(qty("12.4"))).isTrue();
+        assertThat(qty("12.4").equals(qty("12.5"))).isFalse();
+    }
+
+    @Test
+    void testHashCode() {
+        assertThat(qty("12.4").hashCode()).isEqualTo(qty("12.4").hashCode());
+    }
 }

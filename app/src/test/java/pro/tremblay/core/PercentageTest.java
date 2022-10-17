@@ -48,4 +48,15 @@ class PercentageTest {
     void testToString() {
         assertThat(pct("1.2").toString()).isEqualTo("1.20%");
     }
+
+    @Test
+    void testEquals() {
+        assertThat(pct("12.4").equals(pct("12.4"))).isTrue();
+        assertThat(pct("12.4").equals(pct("12.5"))).isFalse();
+    }
+
+    @Test
+    void testHashCode() {
+        assertThat(pct("12.4").hashCode()).isEqualTo(pct("12.4").hashCode());
+    }
 }

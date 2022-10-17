@@ -84,4 +84,20 @@ public final class Amount implements Numeric<Amount> {
             .multiply(Percentage.hundred().value()));
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Amount)) {
+            return false;
+        }
+        Amount a = (Amount) o;
+        return value.equals(a.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return value.hashCode();
+    }
 }

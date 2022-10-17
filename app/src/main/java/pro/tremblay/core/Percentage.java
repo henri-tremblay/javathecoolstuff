@@ -87,4 +87,21 @@ public final class Percentage implements Numeric<Percentage> {
         return fromValue(value.multiply(BigDecimal.valueOf(to))
             .divide(BigDecimal.valueOf(from), 2, RoundingMode.HALF_UP));
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Percentage)) {
+            return false;
+        }
+        Percentage a = (Percentage) o;
+        return value.equals(a.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return value.hashCode();
+    }
 }

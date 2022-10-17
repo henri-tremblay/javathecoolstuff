@@ -43,4 +43,15 @@ class AmountTest {
     void testToString() {
         assertThat(amnt("1.2").toString()).isEqualTo("1.20$");
     }
+
+    @Test
+    void testEquals() {
+        assertThat(amnt("12.4").equals(amnt("12.4"))).isTrue();
+        assertThat(amnt("12.4").equals(amnt("12.5"))).isFalse();
+    }
+
+    @Test
+    void testHashCode() {
+        assertThat(amnt("12.4").hashCode()).isEqualTo(amnt("12.4").hashCode());
+    }
 }

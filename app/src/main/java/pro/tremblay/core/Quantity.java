@@ -72,4 +72,21 @@ public class Quantity implements Numeric<Quantity> {
     public String toString() {
         return value.toPlainString();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Quantity)) {
+            return false;
+        }
+        Quantity a = (Quantity) o;
+        return value.equals(a.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return value.hashCode();
+    }
 }
