@@ -25,17 +25,23 @@ import static pro.tremblay.core.Quantity.qty;
 class QuantityTest {
 
     @Test
-    void amountInteger() {
+    void quantityInteger() {
         assertThat(qty(12L)).isEqualTo("12");
     }
 
     @Test
-    void amountBigDecimal() {
+    void quantityBigDecimal() {
         assertThat(qty(BigDecimal.valueOf(12))).isEqualTo("12");
+    }
+
+    @Test
+    void quantityString() {
+        assertThat(qty("12.45")).isEqualTo("12.45");
     }
 
     @Test
     void testToString() {
         assertThat(qty(12).toString()).isEqualTo("12");
     }
+
 }

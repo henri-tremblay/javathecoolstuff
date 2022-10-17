@@ -48,6 +48,10 @@ public class Quantity implements Numeric<Quantity> {
         this.value = value;
     }
 
+    public static Quantity qty(@Nonnull String value) {
+        return new Quantity(new BigDecimal(Objects.requireNonNull(value)));
+    }
+
     @Nonnull
     @Override
     public Quantity fromValue(@Nonnull BigDecimal newValue) {

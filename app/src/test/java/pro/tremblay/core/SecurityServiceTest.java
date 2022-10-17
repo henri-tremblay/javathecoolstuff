@@ -23,4 +23,8 @@ class SecurityServiceTest {
         assertThat(securityService.allSecurities()).containsExactlyInAnyOrderElementsOf(SecuritiesForTest.SECURITIES);
     }
 
+    @Test
+    void findForTicker() {
+        assertThat(securityService.findForTicker("IBM")).isEqualTo(SecuritiesForTest.IBM);
+    }
 }
