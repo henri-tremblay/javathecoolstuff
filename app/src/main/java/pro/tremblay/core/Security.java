@@ -28,13 +28,7 @@ public record Security(String symbol, String name, String exchange, String asset
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof Security security)) {
-            return false;
-        }
-        return symbol.equals(security.symbol) && exchange.equals(security.exchange);
+        return o instanceof Security security && symbol.equals(security.symbol) && exchange.equals(security.exchange);
     }
 
     @Override

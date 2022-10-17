@@ -57,13 +57,7 @@ public class SecurityPosition {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof SecurityPosition that)) {
-            return false;
-        }
-        return security.equals(that.security) && quantity.equals(that.quantity);
+        return o instanceof SecurityPosition that && security.equals(that.security) && quantity.equals(that.quantity);
     }
 
     @Override
