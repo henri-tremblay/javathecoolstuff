@@ -21,7 +21,7 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
+import java.util.random.RandomGenerator;
 
 import static pro.tremblay.core.Amount.amnt;
 
@@ -35,7 +35,7 @@ public class PriceService {
 
     public PriceService(@Nonnull SecurityService securityService, @Nonnull Clock clock) {
         // Randomly generated price since the beginning of the year
-        Random random = new Random();
+        RandomGenerator random = RandomGenerator.getDefault();
         LocalDate now = LocalDate.now(clock);
         for (Security security : securityService.allSecurities()) {
             LocalDate start = now.withDayOfYear(1);
