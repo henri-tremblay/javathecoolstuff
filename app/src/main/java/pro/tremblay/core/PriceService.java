@@ -39,7 +39,7 @@ public class PriceService {
         LocalDate now = LocalDate.now(clock);
         for (Security security : securityService.allSecurities()) {
             LocalDate start = now.withDayOfYear(1);
-            Amount price = amnt(100 + random.nextInt(200));
+            Amount price = amnt(random.nextInt(100, 300));
             while(!start.isAfter(now)) {
                 Amount tick = amnt(random.nextGaussian());
                 prices.put(getKey(security, start), price.add(tick));
