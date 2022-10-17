@@ -21,12 +21,10 @@ import java.math.BigDecimal;
 import java.util.Objects;
 
 @ThreadSafe
-public final class Quantity implements Numeric<Quantity> {
+public record Quantity(BigDecimal value) implements Numeric<Quantity> {
 
     private static final Quantity ZERO = new Quantity(BigDecimal.ZERO);
     private static final Quantity TEN = qty(10);
-
-    private final BigDecimal value;
 
     public static Quantity zero() {
         return ZERO;
@@ -44,8 +42,8 @@ public final class Quantity implements Numeric<Quantity> {
         return new Quantity(Objects.requireNonNull(value));
     }
 
-    private Quantity(@Nonnull BigDecimal value) {
-        this.value = setScale(value);
+    public Quantity {
+        value = setScale(value);
     }
 
     public static Quantity qty(@Nonnull String value) {
@@ -62,31 +60,8 @@ public final class Quantity implements Numeric<Quantity> {
         return 0;
     }
 
-    @Nonnull
-    @Override
-    public BigDecimal value() {
-        return value;
-    }
-
     @Override
     public String toString() {
         return value.toPlainString();
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof Quantity)) {
-            return false;
-        }
-        Quantity a = (Quantity) o;
-        return value.equals(a.value);
-    }
-
-    @Override
-    public int hashCode() {
-        return value.hashCode();
     }
 }
