@@ -13,8 +13,8 @@ Final state is in the `henri` branch.
 
 ## Benchmark
 
-To run: `./mvnw package -DskipTests && java -jar app/target/benchmarks.jar`
-To run a specific benchmark `java -jar app/target/benchmarks.jar YourClass`
+To run: `./mvnw package -DskipTests && java -jar benchmark/target/benchmarks.jar`
+To run a specific benchmark `java -jar benchmark/target/benchmarks.jar YourClass`
 
 If you want to run it against multiple commits, you can do `java RunBenchmarkSuite.java commit1, commit2, ...`.
 
