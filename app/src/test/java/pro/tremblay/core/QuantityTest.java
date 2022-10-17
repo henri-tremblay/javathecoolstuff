@@ -36,7 +36,7 @@ class QuantityTest {
 
     @Test
     void quantityString() {
-        assertThat(qty("12.45")).isEqualTo("12.45");
+        assertThat(qty("12")).isEqualTo("12");
     }
 
     @Test
@@ -46,8 +46,8 @@ class QuantityTest {
 
     @Test
     void testEquals() {
-        assertThat(qty("12.4").equals(qty("12.4"))).isTrue();
-        assertThat(qty("12.4").equals(qty("12.5"))).isFalse();
+        assertThat(qty("12").equals(qty("12"))).isTrue();
+        assertThat(qty("12").equals(qty("13"))).isFalse();
     }
 
     @Test

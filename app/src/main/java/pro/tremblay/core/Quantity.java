@@ -21,7 +21,7 @@ import java.math.BigDecimal;
 import java.util.Objects;
 
 @ThreadSafe
-public class Quantity implements Numeric<Quantity> {
+public final class Quantity implements Numeric<Quantity> {
 
     private static final Quantity ZERO = new Quantity(BigDecimal.ZERO);
     private static final Quantity TEN = qty(10);
@@ -45,7 +45,7 @@ public class Quantity implements Numeric<Quantity> {
     }
 
     private Quantity(@Nonnull BigDecimal value) {
-        this.value = value;
+        this.value = setScale(value);
     }
 
     public static Quantity qty(@Nonnull String value) {
