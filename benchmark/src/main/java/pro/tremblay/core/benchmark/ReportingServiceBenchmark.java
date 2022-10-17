@@ -26,6 +26,9 @@ import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.annotations.Warmup;
 import pro.tremblay.core.Amount;
+import pro.tremblay.core.Percentage;
+import pro.tremblay.core.Position;
+import pro.tremblay.core.Preferences;
 import pro.tremblay.core.PriceService;
 import pro.tremblay.core.Quantity;
 import pro.tremblay.core.ReportingService;
@@ -34,11 +37,7 @@ import pro.tremblay.core.SecurityPosition;
 import pro.tremblay.core.SecurityService;
 import pro.tremblay.core.Transaction;
 import pro.tremblay.core.TransactionType;
-import pro.tremblay.core.Percentage;
-import pro.tremblay.core.Position;
-import pro.tremblay.core.Preferences;
 
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Clock;
 import java.time.LocalDate;
@@ -63,7 +62,7 @@ public class ReportingServiceBenchmark {
 
     private final Preferences preferences = new Preferences();
     private final Clock clock = Clock.systemUTC();
-    private final SecurityService securityService = new SecurityService(Paths.get("../listing_status.csv"));
+    private final SecurityService securityService = new SecurityService(Paths.get("listing_status.csv"));
     private final PriceService priceService = new PriceService(securityService, clock);
     private final ReportingService service = new ReportingService(preferences, clock, priceService);
 
@@ -110,6 +109,6 @@ public class ReportingServiceBenchmark {
     public static void main(String[] args) {
         ReportingServiceBenchmark benchmark = new ReportingServiceBenchmark();
         benchmark.setup();
-        benchmark.calculate();
+        System.out.println(benchmark.calculate());
     }
 }
