@@ -15,19 +15,15 @@
  */
 package pro.tremblay.core;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.UncheckedIOException;
-import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class SecurityService {
 
@@ -68,39 +64,16 @@ public class SecurityService {
         }
     }
 
-    public Security findForTicker(String ticker) {
-        return allSecurities().stream()
-            .filter(security -> security.symbol().equals(ticker))
-            .findAny()
-            .orElse(null);
-    }
-
-    private Collection<Security> readFile(Path file, Function<String, Security> mapper) {
-        BufferedReader in;
+    private <T> List<T> readFile(Path file, Function<String, T> mapper) {
         try {
-            in = new BufferedReader(new InputStreamReader(new FileInputStream(file.toFile()), Charset.forName("UTF-8")));
-        }
-        catch(FileNotFoundException e) {
-            throw new UncheckedIOException(e);
-        }
-        try {
-            List<Security> list = new ArrayList<>();
-            String s = in.readLine(); // skip first line
-            while((s = in.readLine()) != null) {
-                list.add(mapper.apply(s));
-            }
-            return list;
+            return Files.lines(file)
+                .parallel()
+                .skip(1)
+                .map(mapper)
+                .collect(Collectors.toList());
         }
         catch(IOException e) {
             throw new UncheckedIOException(e);
-        }
-        finally {
-            try {
-                in.close();
-            }
-            catch(IOException e) {
-                // ignore silently
-            }
         }
     }
 }
