@@ -33,9 +33,10 @@ public class Main {
             <title>Return on investment</title>
         </head>
         <body>
-        Your current return on investment as of ${now} is: ${roi}
+        Your current return on investment as of %s is: %s
         </body>
-        </html>""";
+        </html>
+        """;
 
     public static void main(String[] args) throws IOException {
         Preferences preferences = new Preferences();
@@ -52,9 +53,7 @@ public class Main {
         Position current = Position.position().cash(Amount.amnt(10_000));
 
         Percentage roi = reportingService.calculateReturnOnInvestmentYTD(current, transactions);
-        String result = TEMPLATE
-            .replace("${roi}", roi.toString())
-            .replace("${now}", LocalDateTime.now(clock).toString());
+        String result = TEMPLATE.formatted(roi, LocalDateTime.now(clock));
         Files.writeString(Paths.get("result.html"), result, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
 
         System.out.println(result);
