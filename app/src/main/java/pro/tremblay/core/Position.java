@@ -17,12 +17,10 @@ package pro.tremblay.core;
 
 import javax.annotation.concurrent.NotThreadSafe;
 import java.time.LocalDate;
-import java.util.AbstractMap;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static pro.tremblay.core.SecurityPosition.securityPosition;
 
@@ -100,7 +98,7 @@ public class Position {
             .entrySet()
             .stream()
             .map(entry -> securityPosition(entry.getKey(), entry.getValue()))
-            .collect(Collectors.toList());
+            .toList();
     }
 
     @Override
@@ -113,8 +111,8 @@ public class Position {
 
     private List<Map.Entry<String, Quantity>> sortedSecurityPositions() {
         return securityPositions.entrySet().stream()
-            .map(entry -> new AbstractMap.SimpleImmutableEntry<>(entry.getKey().symbol(), entry.getValue()))
+            .map(entry -> Map.entry(entry.getKey().symbol(), entry.getValue()))
             .sorted(Map.Entry.comparingByKey())
-            .collect(Collectors.toList());
+            .toList();
     }
 }
