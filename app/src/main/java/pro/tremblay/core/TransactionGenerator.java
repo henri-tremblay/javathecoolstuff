@@ -20,6 +20,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -29,7 +30,7 @@ public class TransactionGenerator {
         Random random = new Random();
         SecurityService securityService = new SecurityService(Paths.get("listing_status.csv"));
 
-        List<Security> securities = securityService.allSecurities();
+        List<Security> securities = new ArrayList<>(securityService.allSecurities());
         LocalDate now = LocalDate.now();
 
         try (BufferedWriter out = Files.newBufferedWriter(Paths.get("transaction.csv"), StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE)) {

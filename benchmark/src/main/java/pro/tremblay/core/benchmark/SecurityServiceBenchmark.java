@@ -30,7 +30,7 @@ import pro.tremblay.core.Security;
 import pro.tremblay.core.SecurityService;
 
 import java.nio.file.Paths;
-import java.util.List;
+import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
 @BenchmarkMode(Mode.SingleShotTime)
@@ -49,7 +49,7 @@ public class SecurityServiceBenchmark {
     }
 
     @Benchmark
-    public List<Security> loadAllSecurities() {
+    public Collection<Security> loadAllSecurities() {
          return securityService.allSecurities();
     }
 

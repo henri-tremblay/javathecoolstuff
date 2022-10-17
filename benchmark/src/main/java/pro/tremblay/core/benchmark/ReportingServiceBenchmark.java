@@ -30,27 +30,21 @@ import pro.tremblay.core.Percentage;
 import pro.tremblay.core.Position;
 import pro.tremblay.core.Preferences;
 import pro.tremblay.core.PriceService;
-import pro.tremblay.core.Quantity;
 import pro.tremblay.core.ReportingService;
 import pro.tremblay.core.Security;
 import pro.tremblay.core.SecurityPosition;
 import pro.tremblay.core.SecurityService;
 import pro.tremblay.core.Transaction;
-import pro.tremblay.core.TransactionType;
+import pro.tremblay.core.TransactionReader;
 
 import java.nio.file.Paths;
 import java.time.Clock;
-import java.time.LocalDate;
 import java.util.Collection;
-import java.util.List;
-import java.util.Random;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import static pro.tremblay.core.Position.position;
 import static pro.tremblay.core.Quantity.qty;
 import static pro.tremblay.core.SecurityPosition.securityPosition;
-import static pro.tremblay.core.Transaction.transaction;
 
 @BenchmarkMode(Mode.Throughput)
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
@@ -73,7 +67,7 @@ public class ReportingServiceBenchmark {
     public void setup() {
         preferences.put(ReportingService.LENGTH_OF_YEAR, "365");
 
-        List<Security> securities = securityService.allSecurities();
+        Collection<Security> securities = securityService.allSecurities();
         SecurityPosition[] securityPositions = securities.stream()
             .map(sec -> securityPosition(sec, qty(1_000)))
             .toArray(SecurityPosition[]::new);
@@ -82,23 +76,8 @@ public class ReportingServiceBenchmark {
             .cash(Amount.amnt(1_000_000))
             .addSecurityPositions(securityPositions);
 
-        LocalDate now = LocalDate.now();
-        int dayOfYear = now.getDayOfYear();
-
-        TransactionType[] transactionTypes = TransactionType.values();
-
-        Random random = new Random();
-        transactions = random.ints(100, 1, 100)
-            .mapToObj(quantity -> {
-                Transaction t = transaction();
-                return t
-                    .date(now.minusDays(random.nextInt(dayOfYear)))
-                    .cash(Amount.amnt(random.nextInt(1_000)))
-                    .type(transactionTypes[random.nextInt(transactionTypes.length)])
-                    .quantity(t.getType().hasQuantity() ? qty(quantity) : Quantity.zero())
-                    .security(t.getType().hasQuantity() ? securities.get(random.nextInt(securities.size())) : null);
-            })
-            .collect(Collectors.toList());
+        TransactionReader transactionReader = new TransactionReader(securityService);
+        transactions = transactionReader.read(Paths.get("transaction.csv"));
     }
 
     @Benchmark
