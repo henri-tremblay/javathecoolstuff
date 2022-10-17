@@ -1,4 +1,4 @@
-/*
+package pro.tremblay.core;/*
  * Copyright 2022-2022 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,30 +16,21 @@
 import java.lang.System;
 
 /**
- * Script to run the benchmark on multiple git versions of the project.
- * With Java < 10, do {@code javac RunBenchmarkSuite.java && java RunBenchmarkSuite commit1 commit2 ...}.
- * With Java >= 10 do {@code java RunBenchmarkSuite.java commit1 commit2 ...}, e.g. {@code java RunBenchmarkSuite.java master henri}.
+ * Script to run the benchmarks quickly. It compiles and run.
  */
-public class RunBenchmarkSuite {
+public class RunBenchmark {
     public static void main(String[] args) throws Exception {
         if (args.length == 0) {
-            System.out.println("Usage: RunBenchmarkSuite.java commit1 commit2 ...");
+            System.out.println("Usage: RunBenchmarkSuite.java benchmark_name");
             System.exit(1);
         }
-        for (String commit : args) {
-            System.out.println("################# " + commit + " #################");
-            command("git", "checkout", commit);
-            command("mvn", "clean", "package", "-DskipTests");
-            command("java", "-jar", "benchmark/target/benchmarks.jar");
-        }
-
-        command("git", "checkout", "master");
+        command("mvnd", "package", "-DskipTests", "-Denforcer.skip=true", "-Dmaven.javadoc.skip=true");
+        command("java", "-jar", "benchmark/target/benchmarks.jar", args[0]);
     }
 
     private static void command(String... args) throws Exception {
         ProcessBuilder builder = new ProcessBuilder(args)
-            .redirectErrorStream(true)
-            .redirectOutput(ProcessBuilder.Redirect.INHERIT);
+            .inheritIO();
         Process process = builder.start();
 
         process.waitFor();
