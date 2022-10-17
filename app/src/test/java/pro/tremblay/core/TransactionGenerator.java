@@ -20,6 +20,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class TransactionGenerator {
 
@@ -28,7 +29,7 @@ public class TransactionGenerator {
         List<Security> securities = Files.lines(path)
             .map(s -> s.split(","))
             .map(tuple -> new Security(tuple[0], tuple[1], tuple[2], tuple[3], LocalDate.parse(tuple[4])))
-            .toList();
+            .collect(Collectors.toList());
         System.out.println(securities);
     }
 }

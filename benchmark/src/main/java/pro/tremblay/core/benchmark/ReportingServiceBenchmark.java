@@ -39,6 +39,7 @@ import pro.tremblay.core.Position;
 import pro.tremblay.core.Preferences;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.Collection;
@@ -62,7 +63,7 @@ public class ReportingServiceBenchmark {
 
     private final Preferences preferences = new Preferences();
     private final Clock clock = Clock.systemUTC();
-    private final SecurityService securityService = new SecurityService(Path.of("../listing_status.csv"));
+    private final SecurityService securityService = new SecurityService(Paths.get("../listing_status.csv"));
     private final PriceService priceService = new PriceService(securityService, clock);
     private final ReportingService service = new ReportingService(preferences, clock, priceService);
 
