@@ -29,7 +29,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>8</java.version>
+        <java.version>19</java.version>
 
         <jacoco-maven-plugin.version>0.8.8</jacoco-maven-plugin.version>
         <spotbugs-maven-plugin.version>4.7.3.0</spotbugs-maven-plugin.version>
@@ -153,13 +153,8 @@
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
-<!--                    <release>${java.version}</release>-->
-<!--                    <compilerArgs>-->
-<!--                        <arg>&#45;&#45;enable-preview</arg>-->
-<!--                        <arg>&#45;&#45;add-modules=jdk.incubator.concurrent</arg>-->
-<!--                    </compilerArgs>-->
+                   <release>${java.version}</release>
+                   <compilerArgs>--enable-preview</compilerArgs>
                 </configuration>
             </plugin>
             <plugin>
