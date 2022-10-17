@@ -44,16 +44,18 @@ public class SecurityService {
     public List<Security> allSecurities() {
         if (allSecurities == null) {
             synchronized (mutex) {
-                allSecurities = readFile(file, line -> {
-                    String[] fields = line.split(",");
-                    return new Security(
-                        fields[0],
-                        fields[1],
-                        fields[2],
-                        fields[3],
-                        LocalDate.parse(fields[4])
-                    );
-                });
+                if (allSecurities == null) {
+                    allSecurities = readFile(file, line -> {
+                        String[] fields = line.split(",");
+                        return new Security(
+                            fields[0],
+                            fields[1],
+                            fields[2],
+                            fields[3],
+                            LocalDate.parse(fields[4])
+                        );
+                    });
+                }
             }
         }
         return allSecurities;
