@@ -65,7 +65,7 @@ public class Security {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Security security = (Security) o;
-        return symbol.equals(security.symbol)&& exchange.equals(security.exchange);
+        return symbol.equals(security.symbol) && exchange.equals(security.exchange);
     }
 
     @Override
