@@ -20,7 +20,9 @@ import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -28,7 +30,7 @@ public class SecurityService {
 
     private final Path file;
     private final Object mutex = new Object();
-    private volatile Collection<Security> allSecurities;
+    private volatile Map<String, Security> allSecurities;
 
     public SecurityService(Path file) {
         if (!file.toFile().exists()) {
@@ -38,23 +40,32 @@ public class SecurityService {
     }
 
     public Collection<Security> allSecurities() {
+        loadSecurities();
+        return allSecurities.values();
+    }
+
+    private void loadSecurities() {
         if (allSecurities == null) {
             synchronized (mutex) {
                 if (allSecurities == null) {
-                    allSecurities = readFile(file, line -> {
-                        String[] fields = line.split(",");
-                        return new Security(
-                            fields[0],
-                            fields[1],
-                            fields[2],
-                            fields[3],
-                            LocalDate.parse(fields[4])
-                        );
-                    });
+                    Function<String, String[]> tokenizer = line -> line.split(",");
+                    Function<String[], Map.Entry<String, Security>> mapper = fields -> {
+                        try {
+                            return Map.entry(fields[0], new Security(
+                                fields[0],
+                                fields[1],
+                                fields[2],
+                                fields[3],
+                                LocalDate.parse(fields[4])
+                            ));
+                        } catch (RuntimeException e) {
+                            throw new RuntimeException("Failed to parse line " + Arrays.toString(fields), e);
+                        }
+                    };
+                    allSecurities = readFile(file, tokenizer.andThen(mapper));
                 }
             }
         }
-        return allSecurities;
     }
 
     public void clear() {
@@ -64,19 +75,17 @@ public class SecurityService {
     }
 
     public Security findForTicker(String ticker) {
-        return allSecurities().stream()
-            .filter(security -> security.symbol().equals(ticker)) // yeah, O(n). I know
-            .findAny()
-            .orElse(null);
+        loadSecurities();
+        return allSecurities.get(ticker);
     }
 
-    private Collection<Security> readFile(Path file, Function<String, Security> mapper) {
+    private Map<String, Security> readFile(Path file, Function<String, Map.Entry<String, Security>> mapper) {
         try {
             return Files.lines(file)
                 .parallel()
                 .skip(1)
                 .map(mapper)
-                .collect(Collectors.toList());
+                .collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue));
         }
         catch(IOException e) {
             throw new UncheckedIOException(e);
