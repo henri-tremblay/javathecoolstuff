@@ -20,7 +20,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class TransactionReader {
 
@@ -42,7 +41,7 @@ public class TransactionReader {
                     .security(tokens[4].isEmpty() ? null : securityService.findForTicker(tokens[4]))
 
                 )
-                .collect(Collectors.toList());
+                .toList();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
