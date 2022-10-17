@@ -37,7 +37,7 @@ public class Main {
 
         Percentage roi = reportingService.calculateReturnOnInvestmentYTD(current, transactions);
         String result = TEMPLATE.replace("${roi}", roi.toString());
-        Files.write(Paths.get("result.html"), result.getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE_NEW, StandardOpenOption.TRUNCATE_EXISTING);
+        Files.write(Paths.get("result.html"), result.getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
     }
 
 }

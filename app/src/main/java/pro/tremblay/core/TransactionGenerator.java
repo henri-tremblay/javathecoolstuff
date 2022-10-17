@@ -32,7 +32,7 @@ public class TransactionGenerator {
         List<Security> securities = securityService.allSecurities();
         LocalDate now = LocalDate.now();
 
-        try (BufferedWriter out = Files.newBufferedWriter(Paths.get("transaction.csv"), StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE_NEW)) {
+        try (BufferedWriter out = Files.newBufferedWriter(Paths.get("transaction.csv"), StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE)) {
 
             for (int i = 0; i < 1_000_000; i++) {
                 Transaction transaction = Transaction.transaction()
