@@ -18,41 +18,22 @@ package pro.tremblay.core.benchmark;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Fork;
+import org.openjdk.jmh.annotations.Level;
 import org.openjdk.jmh.annotations.Measurement;
 import org.openjdk.jmh.annotations.Mode;
 import org.openjdk.jmh.annotations.OutputTimeUnit;
 import org.openjdk.jmh.annotations.Scope;
-import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
+import org.openjdk.jmh.annotations.TearDown;
 import org.openjdk.jmh.annotations.Warmup;
-import pro.tremblay.core.Amount;
-import pro.tremblay.core.Percentage;
-import pro.tremblay.core.Position;
-import pro.tremblay.core.Preferences;
-import pro.tremblay.core.PriceService;
-import pro.tremblay.core.Quantity;
-import pro.tremblay.core.ReportingService;
 import pro.tremblay.core.Security;
-import pro.tremblay.core.SecurityPosition;
 import pro.tremblay.core.SecurityService;
-import pro.tremblay.core.Transaction;
-import pro.tremblay.core.TransactionType;
 
-import java.nio.file.Path;
-import java.time.Clock;
-import java.time.LocalDate;
-import java.util.Collection;
+import java.nio.file.Paths;
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
-import static pro.tremblay.core.Position.position;
-import static pro.tremblay.core.Quantity.qty;
-import static pro.tremblay.core.SecurityPosition.securityPosition;
-import static pro.tremblay.core.Transaction.transaction;
-
-@BenchmarkMode(Mode.Throughput)
+@BenchmarkMode(Mode.SingleShotTime)
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 @Warmup(iterations = 10, time = 1)
 @Measurement(iterations = 5, time = 2)
@@ -60,55 +41,16 @@ import static pro.tremblay.core.Transaction.transaction;
 @State(Scope.Benchmark)
 public class SecurityServiceBenchmark {
 
-    private final Preferences preferences = new Preferences();
-    private final Clock clock = Clock.systemUTC();
-    private final SecurityService securityService = new SecurityService(Path.of("../listing_status.csv"));
-    private final PriceService priceService = new PriceService(securityService, clock);
-    private final ReportingService service = new ReportingService(preferences, clock, priceService);
+    private final SecurityService securityService = new SecurityService(Paths.get("listing_status.csv"));
 
-    private Collection<Transaction> transactions;
-    private Position position;
-
-    @Setup
-    public void setup() {
-        preferences.put(ReportingService.LENGTH_OF_YEAR, "365");
-
-        List<Security> securities = securityService.allSecurities();
-        SecurityPosition[] securityPositions = securities.stream()
-            .map(sec -> securityPosition(sec, qty(1_000)))
-            .toArray(SecurityPosition[]::new);
-
-        position = position()
-            .cash(Amount.amnt(1_000_000))
-            .addSecurityPositions(securityPositions);
-
-        LocalDate now = LocalDate.now();
-        int dayOfYear = now.getDayOfYear();
-
-        TransactionType[] transactionTypes = TransactionType.values();
-
-        Random random = new Random();
-        transactions = random.ints(100, 1, 100)
-            .mapToObj(quantity -> {
-                Transaction t = transaction();
-                return t
-                    .date(now.minusDays(random.nextInt(dayOfYear)))
-                    .cash(Amount.amnt(random.nextInt(1_000)))
-                    .type(transactionTypes[random.nextInt(transactionTypes.length)])
-                    .quantity(t.getType().hasQuantity() ? qty(quantity) : Quantity.zero())
-                    .security(t.getType().hasQuantity() ? securities.get(random.nextInt(securities.size())) : null);
-            })
-            .collect(Collectors.toList());
+    @TearDown(Level.Invocation)
+    public void tearDown() {
+        securityService.clear();
     }
 
     @Benchmark
-    public Percentage calculate() {
-        return service.calculateReturnOnInvestmentYTD(position, transactions);
+    public List<Security> loadAllSecurities() {
+         return securityService.allSecurities();
     }
 
-    public static void main(String[] args) {
-        SecurityServiceBenchmark benchmark = new SecurityServiceBenchmark();
-        benchmark.setup();
-        benchmark.calculate();
-    }
 }
