@@ -33,7 +33,7 @@ public class SecurityService {
     private volatile Map<String, Security> allSecurities;
 
     public SecurityService(Path file) {
-        if (!file.toFile().exists()) {
+        if (!Files.exists(file)) {
             throw new IllegalArgumentException("Securities file doesn't exist");
         }
         this.file = file;
