@@ -3,3 +3,6 @@ target/
 *.iml
 /RunBenchmarkSuite.class
 dependency-reduced-pom.xml
+/transaction.csv
+/result.html
+/synopsys.md
