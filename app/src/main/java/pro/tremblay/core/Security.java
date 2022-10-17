@@ -17,70 +17,27 @@ package pro.tremblay.core;
 
 import javax.annotation.concurrent.ThreadSafe;
 import java.time.LocalDate;
-import java.util.Objects;
 
 /**
  * Enumeration listing useful available security. In real-life it would be a full-fledged java object but to keep
  * things simple, it's just an enum.
  */
 @ThreadSafe
-public class Security {
-
-    private final String symbol;
-    private final String name;
-    private final String exchange;
-    private final String assetType;
-    private final LocalDate ipoDate;
-
-    public Security(String symbol, String name, String exchange, String assetType, LocalDate ipoDate) {
-        this.symbol = symbol;
-        this.name = name;
-        this.exchange = exchange;
-        this.assetType = assetType;
-        this.ipoDate = ipoDate;
-    }
-
-    public String symbol() {
-        return symbol;
-    }
-
-    public String name() {
-        return name;
-    }
-
-    public String exchange() {
-        return exchange;
-    }
-
-    public String assetType() {
-        return assetType;
-    }
-
-    public LocalDate ipoDate() {
-        return ipoDate;
-    }
+public record Security(String symbol, String name, String exchange, String assetType, LocalDate ipoDate) {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Security security = (Security) o;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Security security)) {
+            return false;
+        }
         return symbol.equals(security.symbol) && exchange.equals(security.exchange);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(symbol, exchange);
-    }
-
-    @Override
-    public String toString() {
-        return "Security{" +
-            "symbol='" + symbol + '\'' +
-            ", name='" + name + '\'' +
-            ", exchange='" + exchange + '\'' +
-            ", assetType='" + assetType + '\'' +
-            ", ipoDate=" + ipoDate +
-            '}';
     }
 }
