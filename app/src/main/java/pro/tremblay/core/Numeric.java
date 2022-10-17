@@ -20,7 +20,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Objects;
 
-public interface Numeric<T extends Numeric<T>> {
+public sealed interface Numeric<T extends Numeric<T>> permits Amount, Quantity, Percentage {
 
     @Nonnull
     BigDecimal value();

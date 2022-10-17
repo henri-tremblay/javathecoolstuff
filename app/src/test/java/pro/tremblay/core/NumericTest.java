@@ -17,41 +17,17 @@ package pro.tremblay.core;
 
 import org.junit.jupiter.api.Test;
 
-import javax.annotation.Nonnull;
 import java.math.BigDecimal;
 
 import static pro.tremblay.core.Assertions.assertThat;
 
 class NumericTest {
 
-    private record ANumeric(@Nonnull BigDecimal value) implements Numeric<ANumeric> {
+    Amount a1 = n("1.2");
+    Amount a2 = n("1.3");
 
-        public ANumeric {
-            value = setScale(value);
-        }
-
-        @Nonnull
-        @Override
-        public ANumeric fromValue(@Nonnull BigDecimal newValue) {
-            return new ANumeric(newValue);
-        }
-
-        @Override
-        public int precision() {
-            return 1;
-        }
-
-        @Override
-        public String toString() {
-            return value.toPlainString();
-        }
-    }
-
-    ANumeric a1 = n("1.2");
-    ANumeric a2 = n("1.3");
-
-    private ANumeric n(String s) {
-        return new ANumeric(new BigDecimal(s));
+    private Amount n(String s) {
+        return new Amount(new BigDecimal(s));
     }
 
     @Test
@@ -62,32 +38,32 @@ class NumericTest {
 
     @Test
     void toBigDecimal() {
-        assertThat(a1).isEqualTo("1.2");
+        assertThat(a1).isEqualTo("1.20");
     }
 
     @Test
     void add() {
-        assertThat(a1.add(a2)).isEqualTo("2.5");
+        assertThat(a1.add(a2)).isEqualTo("2.50");
     }
 
     @Test
     void subtract() {
-        assertThat(a2.subtract(a1)).isEqualTo("0.1");
+        assertThat(a2.subtract(a1)).isEqualTo("0.10");
     }
 
     @Test
     void negate() {
-        assertThat(a1.negate()).isEqualTo("-1.2");
+        assertThat(a1.negate()).isEqualTo("-1.20");
     }
 
     @Test
     void scale() {
-        assertThat(a1.scale(100, 200)).isEqualTo("2.4");
+        assertThat(a1.scale(100, 200)).isEqualTo("2.40");
     }
 
     @Test
     void setScale() {
-        assertThat(new ANumeric(new BigDecimal("1.234"))).isEqualTo("1.2");
-        assertThat(new ANumeric(new BigDecimal("1.254"))).isEqualTo("1.3");
+        assertThat(new Amount(new BigDecimal("1.234"))).isEqualTo("1.23");
+        assertThat(new Amount(new BigDecimal("1.255"))).isEqualTo("1.26");
     }
 }
