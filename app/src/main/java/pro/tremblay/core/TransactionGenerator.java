@@ -41,12 +41,9 @@ public class TransactionGenerator {
                     .date(now.minusDays(random.nextInt(365)))
                     .cash(Amount.amnt(1_000 + random.nextInt( 9_000))); // some transactions will be before this year
 
-                switch (transaction.getType()) {
-                    case BUY:
-                    case SELL: {
-                        transaction.quantity(Quantity.qty(10 + random.nextInt( 9_990)));
-                        transaction.security(securities.get(random.nextInt(securities.size())));
-                    }
+                if (transaction.getType().hasQuantity()) {
+                    transaction.quantity(Quantity.qty(10 + random.nextInt( 9_990)));
+                    transaction.security(securities.get(random.nextInt(securities.size())));
                 }
 
                 out.write(transaction.getType().name());
