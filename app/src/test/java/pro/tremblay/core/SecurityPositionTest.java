@@ -37,7 +37,7 @@ class SecurityPositionTest {
 
     @Test
     void testToString() {
-        assertThat(securityPosition.toString()).isEqualTo("SecurityPosition{security=Security{symbol='GOOGL', name='Alphabet Inc - Class A', exchange='NASDAQ', assetType='Stock', ipoDate=2004-08-19}, quantity=10}");
+        assertThat(securityPosition.toString()).isEqualTo("SecurityPosition{security=Security[symbol=GOOGL, name=Alphabet Inc - Class A, exchange=NASDAQ, assetType=Stock, ipoDate=2004-08-19], quantity=10}");
     }
 
     @Test
