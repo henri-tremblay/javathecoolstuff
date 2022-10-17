@@ -1,6 +1,7 @@
 package pro.tremblay.core;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
@@ -36,7 +37,7 @@ public class Main {
 
         Percentage roi = reportingService.calculateReturnOnInvestmentYTD(current, transactions);
         String result = TEMPLATE.replace("${roi}", roi.toString());
-        Files.writeString(Paths.get("result.html"), result, StandardOpenOption.CREATE_NEW, StandardOpenOption.TRUNCATE_EXISTING);
+        Files.write(Paths.get("result.html"), result.getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE_NEW, StandardOpenOption.TRUNCATE_EXISTING);
     }
 
 }
