@@ -17,6 +17,7 @@ package pro.tremblay.core;
 
 import javax.annotation.concurrent.ThreadSafe;
 import java.time.LocalDate;
+import java.util.Objects;
 
 /**
  * Enumeration listing useful available security. In real-life it would be a full-fledged java object but to keep
@@ -36,4 +37,8 @@ public record Security(String symbol, String name, String exchange, String asset
         return symbol.equals(security.symbol) && exchange.equals(security.exchange);
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(symbol, exchange);
+    }
 }
