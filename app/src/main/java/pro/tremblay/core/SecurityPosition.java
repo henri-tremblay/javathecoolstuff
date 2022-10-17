@@ -28,7 +28,7 @@ public class SecurityPosition {
     private final Security security;
     private final Quantity quantity;
 
-    public static SecurityPosition securityPosition(Security security, Quantity quantity) {
+    public static SecurityPosition securityPosition(@Nonnull Security security, @Nonnull Quantity quantity) {
         return new SecurityPosition(security, quantity);
     }
 
