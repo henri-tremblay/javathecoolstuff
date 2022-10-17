@@ -21,7 +21,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.Collection;
-import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -71,7 +70,7 @@ public class SecurityService {
             .orElse(null);
     }
 
-    private <T> List<T> readFile(Path file, Function<String, T> mapper) {
+    private Collection<Security> readFile(Path file, Function<String, Security> mapper) {
         try {
             return Files.lines(file)
                 .parallel()
