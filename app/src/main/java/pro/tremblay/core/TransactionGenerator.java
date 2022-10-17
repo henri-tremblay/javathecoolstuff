@@ -35,9 +35,10 @@ public class TransactionGenerator {
 
         try (BufferedWriter out = Files.newBufferedWriter(Paths.get("transaction.csv"), StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE)) {
 
+            TransactionType[] transactionTypes = TransactionType.values();
             for (int i = 0; i < 1_000_000; i++) {
                 Transaction transaction = Transaction.transaction()
-                    .type(TransactionType.values()[random.nextInt(TransactionType.values().length)])
+                    .type(transactionTypes[random.nextInt(transactionTypes.length)])
                     .date(now.minusDays(random.nextInt(365)))
                     .cash(Amount.amnt(random.nextInt(1_000,  10_000))); // some transactions will be before this year
 
