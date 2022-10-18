@@ -25,7 +25,9 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.concurrent.Future;
+import java.util.stream.Stream;
 
 public class AlphaVantageConnector {
 
@@ -37,18 +39,23 @@ public class AlphaVantageConnector {
         this.baseUrl = baseUrl;
     }
 
-    public Amount dailyPrice(String ticker) {
-
-        HttpRequest get = HttpRequest
-            .newBuilder(URI.create(baseUrl + "/query?function=TIME_SERIES_DAILY&symbol=" + ticker + "&outputsize=full&apikey=demo"))
-            .header("Accept", "application/json")
-            .GET()
-            .build();
+    public Amount dailyPrice(String... tickers) {
 
         try(var scope = new StructuredTaskScope<String>()) {
-            Future<String> future = scope.fork(() -> client.send(get, HttpResponse.BodyHandlers.ofString()).body());
+            List<Future<String>> futures = Stream.of(tickers)
+                .map(ticker -> scope.fork(() -> {
+                    HttpRequest request = HttpRequest
+                        .newBuilder(URI.create(baseUrl + "/query?function=TIME_SERIES_DAILY&symbol=" + ticker + "&outputsize=full&apikey=demo"))
+                        .header("Accept", "application/json")
+                        .GET()
+                        .build();
+                    return client.send(request, HttpResponse.BodyHandlers.ofString()).body();
+                }))
+                .toList();
             scope.join();
-            System.out.println(future.resultNow());
+            futures.stream()
+                .map(Future::resultNow)
+                .forEach(System.out::println);
         } catch(InterruptedException e) {
             throw new RuntimeException(e);
         }
