@@ -153,8 +153,11 @@
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                   <release>${java.version}</release>
-                   <compilerArgs>--enable-preview</compilerArgs>
+                    <release>${java.version}</release>
+                    <compilerArgs>
+                        <arg>--enable-preview</arg>
+                        <arg>--add-modules=jdk.incubator.concurrent</arg>
+                    </compilerArgs>
                 </configuration>
             </plugin>
             <plugin>
