@@ -15,6 +15,7 @@
  */
 package pro.tremblay.core;
 
+import com.sun.net.httpserver.HttpServer;
 import com.sun.net.httpserver.SimpleFileServer;
 import jdk.incubator.concurrent.StructuredTaskScope;
 
@@ -55,19 +56,23 @@ public class AlphaVantageConnector {
         return Amount.amnt(42); // fake value because I do not want to showcase parsing json
     }
 
-    public static void main(String[] args) {
-        launchServer();
+    public static void main(String[] args) throws Exception {
+        var server = launchServer();
 
-        AlphaVantageConnector connector = new AlphaVantageConnector("http://localhost:8000");
+        var connector = new AlphaVantageConnector("http://localhost:8000");
         connector.dailyPrice("IBM");
+
+        server.stop(0);
     }
 
-    private static void launchServer() {
+    private static HttpServer launchServer() {
         var server = SimpleFileServer.createFileServer(
             new InetSocketAddress(8000),
             Path.of(".").toAbsolutePath(),
             SimpleFileServer.OutputLevel.INFO);
 
         server.start();
+
+        return server;
     }
 }
