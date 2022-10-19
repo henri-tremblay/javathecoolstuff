@@ -84,7 +84,7 @@ public final class Percentage implements Numeric<Percentage> {
      * @return the numerator scaling to another denominator
      */
     public Percentage scale(int from, int to) {
-        return fromValue(value.multiply(BigDecimal.valueOf(to))
+        return new Percentage(value.multiply(BigDecimal.valueOf(to))
             .divide(BigDecimal.valueOf(from), 2, RoundingMode.HALF_UP));
     }
 
