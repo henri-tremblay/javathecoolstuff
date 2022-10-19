@@ -145,7 +145,10 @@
                     <source>${java.version}</source>
                     <target>${java.version}</target>
 <!--                    <release>${java.version}</release>-->
-<!--                    <compilerArgs>&#45;&#45;enable-preview</compilerArgs>-->
+<!--                    <compilerArgs>-->
+<!--                        <arg>&#45;&#45;enable-preview</arg>-->
+<!--                        <arg>&#45;&#45;add-modules=jdk.incubator.concurrent</arg>-->
+<!--                    </compilerArgs>-->
                 </configuration>
             </plugin>
             <plugin>
