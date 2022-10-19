@@ -56,3 +56,22 @@ public class AlphaVantageConnector {
 //
 //        server.start();
 //    }
+
+//         try (var scope = new StructuredTaskScope<String>()) {
+//            List<Future<String>> futures = Stream.of(tickers)
+//                .map(ticker -> scope.fork(() -> {
+//                    HttpRequest get = HttpRequest
+//                        .newBuilder(URI.create(baseUrl + "/query?function=TIME_SERIES_DAILY&symbol=" + ticker + "&outputsize=full&apikey=demo"))
+//                        .header("Accept", "application/json")
+//                        .GET()
+//                        .build();
+//                    return client.send(get, HttpResponse.BodyHandlers.ofString()).body();
+//                }))
+//                .toList();
+//            try {
+//                scope.join();
+//            } catch (InterruptedException e) {
+//                throw new RuntimeException(e);
+//            }
+//            return futures.stream().map(Future::resultNow).toList();
+//        }
