@@ -70,7 +70,7 @@ public class SecurityService {
 
     public Security findForTicker(String ticker) {
         return allSecurities().stream()
-            .filter(security -> security.symbol().equals(ticker)) // yeah, O(n). I know
+            .filter(security -> security.symbol().equals(ticker))
             .findAny()
             .orElse(null);
     }
