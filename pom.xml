@@ -32,7 +32,7 @@
         <java.version>8</java.version>
 
         <jacoco-maven-plugin.version>0.8.8</jacoco-maven-plugin.version>
-        <spotbugs-maven-plugin.version>4.7.2.1</spotbugs-maven-plugin.version>
+        <spotbugs-maven-plugin.version>4.7.3.0</spotbugs-maven-plugin.version>
     </properties>
 
     <dependencyManagement>
