@@ -216,6 +216,13 @@
                         <exclude>mvnw.cmd</exclude>
                         <exclude>.mvn/**</exclude>
                         <exclude>**/*.csv</exclude>
+                        <!-- generated stuff -->
+                        <exclude>myjre/**</exclude>
+                        <exclude>myapp.app/**</exclude>
+                        <exclude>myapp-*.dmg</exclude>
+                        <exclude>target/**</exclude>
+                        <exclude>result.html</exclude>
+                        <exclude>query</exclude>
                     </excludes>
                     <properties>
                         <inceptionYear>${project.inceptionYear}</inceptionYear>
