@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class SecurityService {
 
@@ -80,8 +81,8 @@ public class SecurityService {
     }
 
     private Map<String, Security> readFile(Path file, Function<String, Map.Entry<String, Security>> mapper) {
-        try {
-            return Files.lines(file)
+        try (Stream<String> lines = Files.lines(file)) {
+            return lines
                 .parallel()
                 .skip(1)
                 .map(mapper)
