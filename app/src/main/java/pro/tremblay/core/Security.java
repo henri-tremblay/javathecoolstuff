@@ -70,7 +70,7 @@ public class Security {
 
     @Override
     public int hashCode() {
-        return Objects.hash(symbol, name);
+        return Objects.hash(symbol, exchange);
     }
 
     @Override
