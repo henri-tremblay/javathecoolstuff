@@ -15,6 +15,9 @@
  */
 package pro.tremblay.core;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.ThreadSafe;
 import java.time.Clock;
@@ -31,6 +34,7 @@ import java.util.stream.Collectors;
 public class ReportingService {
 
     public static final String LENGTH_OF_YEAR = "LENGTH_OF_YEAR";
+    private static final Logger logger = LoggerFactory.getLogger(ReportingService.class);
 
     private final Preferences preferences;
     private final Clock clock;
@@ -71,12 +75,14 @@ public class ReportingService {
         rewindTransactions(beginningOfYear, now, working, orderedTransaction);
 
         Amount initialValue = calculatePositionValue(beginningOfYear, working);
+        logger.info("Initial value: {}", initialValue);
 
         if(initialValue.isZero()) {
             return Percentage.zero();
         }
 
         Amount currentValue = calculatePositionValue(now, current);
+        logger.info("Current value: {}", currentValue);
 
         return calculateRoi(now, initialValue, currentValue);
     }
@@ -98,11 +104,18 @@ public class ReportingService {
     private void rewindTransactions(LocalDate beginningOfYear, LocalDate today, Position working, List<Transaction> orderedTransaction) {
         int transactionIndex = 0;
         while (!today.isBefore(beginningOfYear)) {
+            logger.debug("Today is {}", today);
+
             if (transactionIndex >= orderedTransaction.size())  {
                 break;
             }
+
             Transaction transaction = orderedTransaction.get(transactionIndex);
+            logger.debug("Transaction is {}", transaction);
+
             while (transaction.getDate().equals(today)) {
+                logger.info("Reverting {}", transaction);
+
                 // It's a transaction on the date, process it
                 transaction.revert(working);
                 transactionIndex++;
@@ -118,8 +131,8 @@ public class ReportingService {
 
     private List<Transaction> antichronologicalOrderedTransactions(@Nonnull Collection<Transaction> transactions) {
         return transactions.stream()
-                .sorted(Comparator.comparing(Transaction::getDate).reversed())
-                .collect(Collectors.toList());
+            .sorted(Comparator.comparing(Transaction::getDate).reversed())
+            .collect(Collectors.toList());
     }
 
 }
