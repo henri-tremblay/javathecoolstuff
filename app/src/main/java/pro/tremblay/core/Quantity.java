@@ -50,16 +50,6 @@ public record Quantity(BigDecimal value) implements Numeric<Quantity> {
         return new Quantity(new BigDecimal(Objects.requireNonNull(value)));
     }
 
-    @Nonnull
-    @Override
-    public Quantity fromValue(@Nonnull BigDecimal newValue) {
-        return new Quantity(newValue);
-    }
-
-    public int precision() {
-        return 0;
-    }
-
     @Override
     public String toString() {
         return value.toPlainString();

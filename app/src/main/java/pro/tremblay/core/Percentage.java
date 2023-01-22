@@ -51,17 +51,6 @@ public record Percentage(@Nonnull BigDecimal value) implements Numeric<Percentag
         value = setScale(value);
     }
 
-    @Nonnull
-    @Override
-    public Percentage fromValue(@Nonnull BigDecimal newValue) {
-        return new Percentage(newValue);
-    }
-
-    @Override
-    public int precision() {
-        return 2;
-    }
-
     @Override
     public String toString() {
         return value.toPlainString() + "%";

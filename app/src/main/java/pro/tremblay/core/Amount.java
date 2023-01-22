@@ -50,17 +50,6 @@ public record Amount(@Nonnull BigDecimal value) implements Numeric<Amount> {
         value = setScale(value);
     }
 
-    @Override
-    public @Nonnull Amount fromValue(@Nonnull BigDecimal newValue) {
-        return new Amount(newValue);
-    }
-
-    @Override
-    public int precision() {
-        // To simplify, we consider everything is in the same currency so all amounts have a precision of 2
-        return 2;
-    }
-
     public Amount multiply(Quantity quantity) {
         return new Amount(value.multiply(quantity.value()));
     }

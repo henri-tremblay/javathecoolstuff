@@ -26,9 +26,22 @@ public sealed interface Numeric<T extends Numeric<T>> permits Amount, Quantity, 
     BigDecimal value();
 
     @Nonnull
-    T fromValue(@Nonnull BigDecimal newValue);
+    default T fromValue(@Nonnull BigDecimal newValue) {
+        return (T) switch (this) {
+            case Amount a -> new Amount(newValue);
+            case Quantity q -> new Quantity(newValue);
+            case Percentage p -> new Percentage(newValue);
+        };
+    }
 
-    int precision();
+    default int precision() {
+        return switch (this) {
+            // To simplify, we consider everything is in the same currency so all amounts have a precision of 2
+            case Amount a -> 2;
+            case Quantity q -> 0;
+            case Percentage p -> 2;
+        };
+    }
 
     default T add(@Nonnull T numeric) {
         return fromValue(value().add(numeric.value()));
