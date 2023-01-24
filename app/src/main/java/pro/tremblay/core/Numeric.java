@@ -27,11 +27,13 @@ public sealed interface Numeric<T extends Numeric<T>> permits Amount, Quantity, 
 
     @Nonnull
     default T fromValue(@Nonnull BigDecimal newValue) {
-        return (T) switch (this) {
+        @SuppressWarnings("unchecked")
+        T result = (T) switch (this) {
             case Amount a -> new Amount(newValue);
             case Quantity q -> new Quantity(newValue);
             case Percentage p -> new Percentage(newValue);
         };
+        return result;
     }
 
     default int precision() {
