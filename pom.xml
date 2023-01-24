@@ -187,7 +187,7 @@
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-<!--                    <argLine>&#45;&#45;enable-preview &#45;&#45;add-modules=jdk.incubator.concurrent</argLine>-->
+                    <argLine>--enable-preview --add-modules=jdk.incubator.concurrent</argLine>
                 </configuration>
             </plugin>
 
