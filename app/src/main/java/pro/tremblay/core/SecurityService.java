@@ -24,16 +24,17 @@ import java.io.UncheckedIOException;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.time.LocalDate;
-import java.util.ArrayList;
+import java.util.AbstractMap;
 import java.util.Collection;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Function;
 
 public class SecurityService {
 
     private final Path file;
     private final Object mutex = new Object();
-    private volatile Collection<Security> allSecurities;
+    private volatile Map<String, Security> allSecurities;
 
     public SecurityService(Path file) {
         if (!file.toFile().exists()) {
@@ -43,23 +44,27 @@ public class SecurityService {
     }
 
     public Collection<Security> allSecurities() {
+        loadSecurities();
+        return allSecurities.values();
+    }
+
+    private void loadSecurities() {
         if (allSecurities == null) {
             synchronized (mutex) {
                 if (allSecurities == null) {
                     allSecurities = readFile(file, line -> {
                         String[] fields = line.split(",");
-                        return new Security(
+                        return new AbstractMap.SimpleImmutableEntry<>(fields[0], new Security(
                             fields[0],
                             fields[1],
                             fields[2],
                             fields[3],
                             LocalDate.parse(fields[4])
-                        );
+                        ));
                     });
                 }
             }
         }
-        return allSecurities;
     }
 
     public void clear() {
@@ -69,13 +74,10 @@ public class SecurityService {
     }
 
     public Security findForTicker(String ticker) {
-        return allSecurities().stream()
-            .filter(security -> security.symbol().equals(ticker))
-            .findAny()
-            .orElse(null);
+        return allSecurities.get(ticker);
     }
 
-    private Collection<Security> readFile(Path file, Function<String, Security> mapper) {
+    private Map<String, Security> readFile(Path file, Function<String, Map.Entry<String, Security>> mapper) {
         BufferedReader in;
         try {
             in = new BufferedReader(new InputStreamReader(new FileInputStream(file.toFile()), Charset.forName("UTF-8")));
@@ -84,12 +86,13 @@ public class SecurityService {
             throw new UncheckedIOException(e);
         }
         try {
-            List<Security> list = new ArrayList<>();
+            Map<String, Security> map = new HashMap<>();
             String s = in.readLine(); // skip first line
             while((s = in.readLine()) != null) {
-                list.add(mapper.apply(s));
+                Map.Entry<String, Security> entry = mapper.apply(s);
+                map.put(entry.getKey(), entry.getValue());
             }
-            return list;
+            return map;
         }
         catch(IOException e) {
             throw new UncheckedIOException(e);
