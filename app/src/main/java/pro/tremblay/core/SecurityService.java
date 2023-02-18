@@ -25,12 +25,10 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 public class SecurityService {
 
@@ -95,13 +93,13 @@ public class SecurityService {
             throw new UncheckedIOException(e);
         }
         try {
-            List<Security> list = new ArrayList<>();
+            Map<String, Security> map = new HashMap<>();
             String s = in.readLine(); // skip first line
             while((s = in.readLine()) != null) {
                 Security security = mapper.apply(s);
                 map.put(security.symbol(), security);
             }
-            return list.stream().collect(Collectors.toMap(Security::symbol, Function.identity()));
+            return map;
         }
         catch(IOException e) {
             throw new UncheckedIOException(e);
