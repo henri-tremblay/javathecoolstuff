@@ -23,7 +23,7 @@ public class Main {
         </body>
         </html>""";
 
-    private static final List<String> LANGUAGES = List.of("JavaScript", "Ruby", "Scala", "Clojure", "Dart", "Go");
+    private static final List<String> LANGUAGES = List.of("JavaScript", "Ruby", "Scala", "Clojure", "Dart", "Go", "Rust");
 
     public static void main(String[] args) throws Exception {
         try (var scope = new StructuredTaskScope<Void>()) {
