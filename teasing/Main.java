@@ -1,10 +1,11 @@
 import com.sun.net.httpserver.SimpleFileServer;
+import jdk.incubator.concurrent.StructuredTaskScope;
 
-import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.time.Duration;
 import java.util.List;
 
 public class Main {
@@ -22,15 +23,28 @@ public class Main {
         </body>
         </html>""";
 
-    public static void main(String[] args) throws IOException {
-        String result = TEMPLATE.formatted(args[0]);
-        Files.writeString(Path.of("index.html"), result, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+    private static final List<String> LANGUAGES = List.of("JavaScript", "Ruby", "Scala", "Clojure", "Dart", "Go");
 
-        var server = SimpleFileServer.createFileServer(
-            new InetSocketAddress(8000),
-            Path.of(".").toAbsolutePath(),
-            SimpleFileServer.OutputLevel.INFO);
+    public static void main(String[] args) throws Exception {
+        try (var scope = new StructuredTaskScope<Void>()) {
+            scope.fork(() -> {
+                while(true) {
+                    for (String language : LANGUAGES) {
+                        String result = TEMPLATE.formatted(language);
+                        Files.writeString(Path.of("index.html"), result, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+                        Thread.sleep(Duration.ofSeconds(2));
+                    }
+                }
+            });
 
-        server.start();
+            var server = SimpleFileServer.createFileServer(
+                new InetSocketAddress(8000),
+                Path.of(".").toAbsolutePath(),
+                SimpleFileServer.OutputLevel.INFO);
+
+            server.start();
+
+            scope.join();
+        }
     }
 }
