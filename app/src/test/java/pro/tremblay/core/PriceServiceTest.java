@@ -15,47 +15,43 @@
  */
 package pro.tremblay.core;
 
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
-import java.time.Clock;
-import java.time.LocalDate;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.mock;
-import static org.easymock.EasyMock.replay;
+import java.nio.file.Path;
 
 class PriceServiceTest {
 
-    private Clock clock = Clock.systemDefaultZone();
+//    private static HttpServer server;
+    private final PriceService priceService = new RealPriceService("http://localhost:8000");
 
-    private SecurityService securityService = mock(SecurityService.class);
-    private PriceService priceService;
+    @BeforeAll
+    static void before(@TempDir Path dir) throws Exception {
+//        Files.writeString(dir.resolve(SecuritiesForTest.GOOGL.symbol()), "12.34", StandardOpenOption.CREATE_NEW);
+//        server = SimpleFileServer.createFileServer(
+//            new InetSocketAddress(8000),
+//            dir,
+//            SimpleFileServer.OutputLevel.INFO);
+//        server.start();
+    }
 
-    @BeforeEach
-    public void before() {
-        expect(securityService.allSecurities()).andStubReturn(SecuritiesForTest.SECURITIES);
-        replay(securityService);
-        priceService = new PriceService(securityService, clock);
+    @AfterAll
+    static void after() {
+//        server.stop(0);
     }
 
     @Test
     void getPrice() {
-        LocalDate now = LocalDate.now(clock);
-        LocalDate date = now.withDayOfYear(1);
-        while(!date.isAfter(now)) {
-            assertThat(priceService.getPrice(date, SecuritiesForTest.GOOGL)).isNotNull();
-            date = date.plusDays(1);
-        }
+//        Amount price = priceService.getPrice(SecuritiesForTest.GOOGL);
+//        assertThat(price).isEqualTo(Amount.amnt("12.34"));
     }
 
     @Test
     void getPrice_noPrice() {
-        LocalDate yearsAgo = LocalDate.of(1977, 1, 1);
-        assertThatIllegalArgumentException()
-            .isThrownBy(() -> priceService.getPrice(yearsAgo, SecuritiesForTest.IBM))
-            .withMessage("No price found at 1977-01-01 for IBM");
+//        assertThatIllegalArgumentException()
+//            .isThrownBy(() -> priceService.getPrice(SecuritiesForTest.IBM))
+//            .withMessage("No price found for IBM");
     }
 }

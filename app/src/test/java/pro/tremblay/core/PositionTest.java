@@ -69,12 +69,12 @@ class PositionTest {
     void securityPositionValue() {
         LocalDate now = LocalDate.now();
 
-        PriceService priceService = mock(PriceService.class);
-        expect(priceService.getPrice(now, SecuritiesForTest.GOOGL)).andStubReturn(amnt(10));
-        expect(priceService.getPrice(now, SecuritiesForTest.AAPL)).andStubReturn(amnt(5));
+        RealPriceService priceService = mock(RealPriceService.class);
+        expect(priceService.getPrice(SecuritiesForTest.GOOGL)).andStubReturn(amnt(10));
+        expect(priceService.getPrice(SecuritiesForTest.AAPL)).andStubReturn(amnt(5));
         replay(priceService);
 
-        Amount result = position.securityPositionValue(now, priceService);
+        Amount result = position.securityPositionValue(priceService);
         assertThat(result).isEqualTo("275.00"); // 22 * 10 + 11 * 5
     }
 
@@ -85,10 +85,10 @@ class PositionTest {
         position = position()
             .addSecurityPosition(SecuritiesForTest.AAPL, qty(0));
 
-        PriceService priceService = mock(PriceService.class);
+        RealPriceService priceService = mock(RealPriceService.class);
         replay(priceService);
 
-        Amount result = position.securityPositionValue(now, priceService);
+        Amount result = position.securityPositionValue(priceService);
         assertThat(result).isEqualTo(Amount.zero());
 
         verify(priceService);

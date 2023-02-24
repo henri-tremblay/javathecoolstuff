@@ -17,10 +17,7 @@ package pro.tremblay.core;
 
 import javax.annotation.Nonnull;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.Objects;
-
-import static pro.tremblay.core.Percentage.pct;
 
 public final class Amount implements Numeric<Amount> {
 
@@ -76,12 +73,6 @@ public final class Amount implements Numeric<Amount> {
     @Override
     public String toString() {
         return value.toPlainString() + "$";
-    }
-
-    public Percentage asRatioOf(Amount initialValue) {
-        return pct(value.subtract(initialValue.value)
-            .divide(initialValue.value, 10, RoundingMode.HALF_UP)
-            .multiply(Percentage.hundred().value()));
     }
 
     @Override

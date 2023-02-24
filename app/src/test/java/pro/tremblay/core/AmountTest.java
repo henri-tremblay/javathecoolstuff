@@ -21,7 +21,6 @@ import java.math.BigDecimal;
 
 import static pro.tremblay.core.Amount.amnt;
 import static pro.tremblay.core.Assertions.assertThat;
-import static pro.tremblay.core.Percentage.pct;
 
 class AmountTest {
 
@@ -49,7 +48,6 @@ class AmountTest {
     void testEquals() {
         assertThat(amnt("12.4").equals(amnt("12.4"))).isTrue();
         assertThat(amnt("12.4").equals(amnt("12.5"))).isFalse();
-        assertThat(amnt("12.4").equals(pct("12.4"))).isFalse();
         assertThat(amnt("12.4").equals(null)).isFalse();
     }
 

@@ -16,7 +16,6 @@
 package pro.tremblay.core;
 
 import javax.annotation.concurrent.NotThreadSafe;
-import java.time.LocalDate;
 import java.util.AbstractMap;
 import java.util.Collection;
 import java.util.HashMap;
@@ -87,11 +86,11 @@ public class Position {
         return position;
     }
 
-    public Amount securityPositionValue(LocalDate date, PriceService priceService) {
+    public Amount securityPositionValue(RealPriceService priceService) {
         return securityPositions
             .entrySet()
             .stream()
-            .map(entry -> priceService.getPrice(date, entry.getKey()).multiply(entry.getValue()))
+            .map(entry -> priceService.getPrice(entry.getKey()).multiply(entry.getValue()))
             .reduce(Amount.zero(), Amount::add);
     }
 

@@ -20,9 +20,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.time.Clock;
-import java.time.LocalDateTime;
-import java.util.Collection;
 
 public class Main {
 
@@ -35,29 +32,20 @@ public class Main {
         "</head>\n" +
         "<body>\n" +
         "    <div class=\"alert alert-primary\" role=\"alert\">\n" +
-        "        Your current return on investment as of ${now} is: ${roi}\n" +
+        "        Portfolio value is: ${value}\n" +
         "    </div>" +
         "</body>\n" +
         "</html>";
 
     public static void main(String[] args) throws IOException {
-        Preferences preferences = new Preferences();
-        preferences.put(ReportingService.LENGTH_OF_YEAR, "365");
-
-        Clock clock = Clock.systemUTC();
         SecurityService securityService = new SecurityService(Paths.get("listing_status.csv"));
-        PriceService priceService = new PriceService(securityService, clock);
-        ReportingService reportingService = new ReportingService(preferences, clock, priceService);
+        PositionReader positionReader = new PositionReader(securityService);
+        RealPriceService priceService = new RealPriceService("http://localhost:8000");
 
-        TransactionReader transactionReader = new TransactionReader(securityService);
-        Collection<Transaction> transactions = transactionReader.read(Paths.get("transaction.csv"));
+        Position current = positionReader.readFromFile(Paths.get("positions.csv"));
+        Amount amount = current.securityPositionValue(priceService);
 
-        Position current = Position.position().cash(Amount.amnt(10_000));
-
-        Percentage roi = reportingService.calculateReturnOnInvestmentYTD(current, transactions);
-        String result = TEMPLATE
-            .replace("${roi}", roi.toString())
-            .replace("${now}", LocalDateTime.now(clock).toString());
+        String result = TEMPLATE.replace("${value}", amount.toString());
         Files.write(Paths.get("result.html"), result.getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
 
         System.out.println(result);

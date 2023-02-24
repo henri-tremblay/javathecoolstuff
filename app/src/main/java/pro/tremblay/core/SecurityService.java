@@ -22,10 +22,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UncheckedIOException;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 
@@ -33,27 +33,27 @@ public class SecurityService {
 
     private final Path file;
     private final Object mutex = new Object();
-    private volatile Collection<Security> allSecurities;
+    private volatile List<Security> allSecurities;
 
     public SecurityService(Path file) {
-        if (!file.toFile().exists()) {
+        if (!Files.exists(file)) {
             throw new IllegalArgumentException("Securities file doesn't exist");
         }
         this.file = file;
     }
 
-    public Collection<Security> allSecurities() {
+    public List<Security> allSecurities() {
         if (allSecurities == null) {
             synchronized (mutex) {
                 if (allSecurities == null) {
                     allSecurities = readFile(file, line -> {
                         String[] fields = line.split(",");
                         return new Security(
-                            fields[0],
-                            fields[1],
-                            fields[2],
-                            fields[3],
-                            LocalDate.parse(fields[4])
+                                fields[0],
+                                fields[1],
+                                fields[2],
+                                fields[3],
+                                LocalDate.parse(fields[4])
                         );
                     });
                 }
@@ -70,12 +70,12 @@ public class SecurityService {
 
     public Security findForTicker(String ticker) {
         return allSecurities().stream()
-            .filter(security -> security.symbol().equals(ticker))
-            .findAny()
-            .orElse(null);
+                .filter(security -> security.symbol().equals(ticker))
+                .findAny()
+                .orElse(null);
     }
 
-    private Collection<Security> readFile(Path file, Function<String, Security> mapper) {
+    private List<Security> readFile(Path file, Function<String, Security> mapper) {
         BufferedReader in;
         try {
             in = new BufferedReader(new InputStreamReader(new FileInputStream(file.toFile()), Charset.forName("UTF-8")));
