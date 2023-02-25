@@ -15,6 +15,9 @@
  */
 package pro.tremblay.core;
 
+//import com.sun.net.httpserver.HttpServer;
+//import com.sun.net.httpserver.SimpleFileServer;
+
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -22,10 +25,13 @@ import org.junit.jupiter.api.io.TempDir;
 
 import java.nio.file.Path;
 
-class PriceServiceTest {
+//import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+//import static pro.tremblay.core.Assertions.assertThat;
+
+class RealPriceServiceTest {
 
 //    private static HttpServer server;
-    private final PriceService priceService = new RealPriceService("http://localhost:8000");
+//    private final PriceService priceService = new RealPriceService("http://localhost:8000");
 
     @BeforeAll
     static void before(@TempDir Path dir) throws Exception {

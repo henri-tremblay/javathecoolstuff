@@ -86,7 +86,7 @@ public class Position {
         return position;
     }
 
-    public Amount securityPositionValue(RealPriceService priceService) {
+    public Amount securityPositionValue(PriceService priceService) {
         return securityPositions
             .entrySet()
             .stream()

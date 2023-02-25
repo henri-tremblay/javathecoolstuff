@@ -40,7 +40,7 @@ public class Main {
     public static void main(String[] args) throws IOException {
         SecurityService securityService = new SecurityService(Paths.get("listing_status.csv"));
         PositionReader positionReader = new PositionReader(securityService);
-        RealPriceService priceService = new RealPriceService("http://localhost:8000");
+        PriceService priceService = new FakePriceService();
 
         Position current = positionReader.readFromFile(Paths.get("positions.csv"));
         Amount amount = current.securityPositionValue(priceService);
