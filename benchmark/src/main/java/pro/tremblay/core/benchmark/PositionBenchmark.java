@@ -27,9 +27,10 @@ import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.annotations.Warmup;
 import pro.tremblay.core.Amount;
+import pro.tremblay.core.FakePriceService;
 import pro.tremblay.core.Position;
 import pro.tremblay.core.PositionReader;
-import pro.tremblay.core.RealPriceService;
+import pro.tremblay.core.PriceService;
 import pro.tremblay.core.SecurityService;
 
 import java.io.IOException;
@@ -44,7 +45,7 @@ import java.util.concurrent.TimeUnit;
 @State(Scope.Benchmark)
 public class PositionBenchmark {
 
-    RealPriceService priceService = new RealPriceService("http://localhost:8000");
+    PriceService priceService = new FakePriceService();
     Position current;
 
     @Setup(Level.Trial)
