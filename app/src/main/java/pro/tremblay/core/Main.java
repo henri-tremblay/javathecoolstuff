@@ -33,7 +33,7 @@ public class Main {
         "</head>\n" +
         "<body>\n" +
         "    <div class=\"alert alert-primary\" role=\"alert\">\n" +
-        "        Portfolio value at the beginning of the year: ${initialValue}\n" +
+        "        Portfolio value at the beginning of the year: ${initialValue}<br>\n" +
         "        Portfolio value now: ${currentValue}\n" +
         "    </div>" +
         "</body>\n" +
