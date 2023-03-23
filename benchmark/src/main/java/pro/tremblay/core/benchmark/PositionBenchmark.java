@@ -50,7 +50,7 @@ public class PositionBenchmark {
 
     @Setup(Level.Trial)
     public void setUp() throws IOException {
-        SecurityService securityService = new SecurityService(Paths.get("listing_status.csv"));
+        SecurityService securityService = new SecurityService(Paths.get("securities.csv"));
         PositionReader positionReader = new PositionReader(securityService);
         current = positionReader.readFromFile(Paths.get("positions.csv"));
     }

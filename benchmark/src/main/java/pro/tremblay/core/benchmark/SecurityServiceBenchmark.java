@@ -41,7 +41,7 @@ import java.util.concurrent.TimeUnit;
 @State(Scope.Benchmark)
 public class SecurityServiceBenchmark {
 
-    private final SecurityService securityService = new SecurityService(Paths.get("listing_status.csv"));
+    private final SecurityService securityService = new SecurityService(Paths.get("securities.csv"));
 
     @TearDown(Level.Invocation)
     public void tearDown() {
