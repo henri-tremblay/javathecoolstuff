@@ -33,9 +33,6 @@ public class TransactionGenerator {
                 }
 
                 out.write(transaction.getType().name());
-                Security security = securities.get(random.nextInt(securities.size()));
-                long quantity = 1 + random.nextInt(999);
-                out.write(security.symbol());
                 out.write(",");
                 out.write(transaction.getDate().toString());
                 out.write(",");
@@ -44,7 +41,6 @@ public class TransactionGenerator {
                 out.write(transaction.getQuantity() == null ? "" : transaction.getQuantity().value().toPlainString());
                 out.write(",");
                 out.write(transaction.getSecurity() == null ? "" : transaction.getSecurity().symbol());
-                out.write("" + quantity);
                 out.newLine();
             }
         }

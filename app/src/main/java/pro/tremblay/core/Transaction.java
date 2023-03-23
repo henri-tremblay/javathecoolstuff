@@ -42,6 +42,10 @@ public class Transaction {
 
     private Transaction() {}
 
+    public boolean hasQuantity() {
+        return getType().hasQuantity();
+    }
+
     public TransactionType getType() {
         return type;
     }

@@ -21,6 +21,7 @@ import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class TransactionReader {
 
@@ -31,8 +32,8 @@ public class TransactionReader {
     }
 
     public List<Transaction> read(Path transactionFile) {
-        try {
-            return Files.lines(transactionFile)
+        try (Stream<String> lines = Files.lines(transactionFile)) {
+            return lines
                 .map(line -> line.split(",", 5))
                 .map(tokens -> Transaction.transaction()
                     .type(TransactionType.valueOf(tokens[0]))
@@ -40,7 +41,6 @@ public class TransactionReader {
                     .cash(Amount.amnt(tokens[2]))
                     .quantity(tokens[3].isEmpty() ? null : Quantity.qty(tokens[3]))
                     .security(tokens[4].isEmpty() ? null : securityService.findForTicker(tokens[4]))
-
                 )
                 .collect(Collectors.toList());
         } catch (IOException e) {
