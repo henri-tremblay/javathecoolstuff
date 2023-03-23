@@ -11,3 +11,5 @@ dependency-reduced-pom.xml
 /myapp-*.dmg
 /teasing/index.html
 /positions.csv
+/transactions.csv
+

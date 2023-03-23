@@ -116,4 +116,8 @@ public class Position {
             .sorted(Map.Entry.comparingByKey())
             .collect(Collectors.toList());
     }
+
+    public void revert(List<Transaction> transactions) {
+        transactions.forEach(t -> t.revert(this));
+    }
 }
