@@ -20,6 +20,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.List;
 
 public class Main {
 
@@ -32,20 +33,30 @@ public class Main {
         "</head>\n" +
         "<body>\n" +
         "    <div class=\"alert alert-primary\" role=\"alert\">\n" +
-        "        Portfolio value is: ${value}\n" +
+        "        Portfolio value at the beginning of the year: ${initialValue}\n" +
+        "        Portfolio value now: ${currentValue}\n" +
         "    </div>" +
         "</body>\n" +
         "</html>";
 
     public static void main(String[] args) throws IOException {
-        SecurityService securityService = new SecurityService(Paths.get("listing_status.csv"));
+        SecurityService securityService = new SecurityService(Paths.get("securities.csv"));
         PositionReader positionReader = new PositionReader(securityService);
         PriceService priceService = new FakePriceService();
 
         Position current = positionReader.readFromFile(Paths.get("positions.csv"));
-        Amount amount = current.securityPositionValue(priceService);
+        Amount currentAmount = current.securityPositionValue(priceService);
 
-        String result = TEMPLATE.replace("${value}", amount.toString());
+        TransactionReader transactionReader = new TransactionReader(securityService);
+        List<Transaction> transactions = transactionReader.read(Paths.get("transactions.csv"));
+
+        Position initial = current.copy();
+        initial.revert(transactions);
+        Amount initialAmount = initial.securityPositionValue(priceService);
+
+        String result = TEMPLATE
+            .replace("${initialValue}", initialAmount.toString())
+            .replace("${currentValue}", currentAmount.toString());
         Files.write(Paths.get("result.html"), result.getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
 
         System.out.println(result);

@@ -26,14 +26,17 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class SecurityService {
 
     private final Path file;
     private final Object mutex = new Object();
-    private volatile List<Security> allSecurities;
+    private volatile Map<String, Security> allSecurities;
 
     public SecurityService(Path file) {
         if (!Files.exists(file)) {
@@ -42,24 +45,28 @@ public class SecurityService {
         this.file = file;
     }
 
-    public List<Security> allSecurities() {
+    public Collection<Security> allSecurities() {
+        loadSecurities();
+        return allSecurities.values();
+    }
+
+    private void loadSecurities() {
         if (allSecurities == null) {
             synchronized (mutex) {
                 if (allSecurities == null) {
                     allSecurities = readFile(file, line -> {
                         String[] fields = line.split(",");
                         return new Security(
-                                fields[0],
-                                fields[1],
-                                fields[2],
-                                fields[3],
-                                LocalDate.parse(fields[4])
+                            fields[0],
+                            fields[1],
+                            fields[2],
+                            fields[3],
+                            LocalDate.parse(fields[4])
                         );
                     });
                 }
             }
         }
-        return allSecurities;
     }
 
     public void clear() {
@@ -69,13 +76,11 @@ public class SecurityService {
     }
 
     public Security findForTicker(String ticker) {
-        return allSecurities().stream()
-                .filter(security -> security.symbol().equals(ticker))
-                .findAny()
-                .orElse(null);
+        loadSecurities();
+        return allSecurities.get(ticker);
     }
 
-    private List<Security> readFile(Path file, Function<String, Security> mapper) {
+    private Map<String, Security> readFile(Path file, Function<String, Security> mapper) {
         BufferedReader in;
         try {
             in = new BufferedReader(new InputStreamReader(new FileInputStream(file.toFile()), Charset.forName("UTF-8")));
@@ -89,7 +94,7 @@ public class SecurityService {
             while((s = in.readLine()) != null) {
                 list.add(mapper.apply(s));
             }
-            return list;
+            return list.stream().collect(Collectors.toMap(Security::symbol, Function.identity()));
         }
         catch(IOException e) {
             throw new UncheckedIOException(e);
