@@ -17,12 +17,9 @@ package pro.tremblay.core;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.ThreadSafe;
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
+//import java.net.http.HttpClient;
+//import java.net.http.HttpRequest;
+//import java.net.http.HttpResponse;
 
 /**
  * Service returning security prices. This is actually a fake implementation using randomly generated prices.
@@ -30,7 +27,7 @@ import java.net.http.HttpResponse;
 @ThreadSafe
 public class RealPriceService implements PriceService {
 
-    private final HttpClient client = HttpClient.newHttpClient();
+//    private final HttpClient client = HttpClient.newHttpClient();
     private final String baseUrl;
 
     public RealPriceService(String baseUrl) {
@@ -56,22 +53,23 @@ public class RealPriceService implements PriceService {
     }
 
     private Amount queryPrice(@Nonnull String ticker) {
-        HttpRequest request = HttpRequest.newBuilder(URI.create(baseUrl + "/" + ticker))
-                .header("Accept", "application/json")
-                .GET()
-                .build();
-        HttpResponse<String> body;
-        try {
-            body = client.send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        } catch (InterruptedException e) {
-            return null;
-        }
-        if (body.statusCode() == 404) {
-            return null;
-        }
-        return Amount.amnt(body.body().trim());
+//        var request = HttpRequest.newBuilder(URI.create(baseUrl + "/" + ticker))
+//                .header("Accept", "application/json")
+//                .GET()
+//                .build();
+//        HttpResponse<String> body;
+//        try {
+//            body = client.send(request, HttpResponse.BodyHandlers.ofString());
+//        } catch (IOException e) {
+//            throw new UncheckedIOException(e);
+//        } catch (InterruptedException e) {
+//            return null;
+//        }
+//        if (body.statusCode() == 404) {
+//            return null;
+//        }
+//        return Amount.amnt(body.body().trim());
+        return null;
     }
 
 //    public static void main(String[] args) throws Exception {
