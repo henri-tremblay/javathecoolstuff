@@ -30,7 +30,7 @@ public class FakePriceService implements PriceService {
     @Nonnull
     @Override
     public Amount getPrice(@Nonnull Security security) {
-        return prices.computeIfAbsent(security, s -> Amount.amnt(random.nextDouble() * 100));
+        return prices.computeIfAbsent(security, s -> Amount.amnt(10 + random.nextInt(190)));
     }
 
 }
