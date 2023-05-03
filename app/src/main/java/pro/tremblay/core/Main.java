@@ -43,13 +43,12 @@ public class Main {
         SecurityService securityService = new SecurityService(Paths.get("securities.csv"));
         PositionReader positionReader = new PositionReader(securityService);
         PriceService priceService = new FakePriceService();
+        TransactionReader transactionReader = new TransactionReader(securityService);
 
         Position current = positionReader.readFromFile(Paths.get("positions.csv"));
-        Amount currentAmount = current.securityPositionValue(priceService);
-
-        TransactionReader transactionReader = new TransactionReader(securityService);
         List<Transaction> transactions = transactionReader.read(Paths.get("transactions.csv"));
 
+        Amount currentAmount = current.securityPositionValue(priceService);
         Position initial = current.copy();
         initial.revert(transactions);
         Amount initialAmount = initial.securityPositionValue(priceService);
