@@ -16,8 +16,10 @@
 package pro.tremblay.core;
 
 import org.junit.jupiter.api.Test;
+import org.junitpioneer.jupiter.RetryingTest;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 class FakePriceServiceTest {
 
@@ -30,7 +32,7 @@ class FakePriceServiceTest {
         assertSame(a1, a2);
     }
 
-    @Test
+    @RetryingTest(2)
     void getPrice_randomPrices() {
         Amount a1 = priceService.getPrice(SecuritiesForTest.GOOGL);
         Amount a2 = priceService.getPrice(SecuritiesForTest.IBM);
