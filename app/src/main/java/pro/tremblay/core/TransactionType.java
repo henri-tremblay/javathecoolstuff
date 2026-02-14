@@ -15,8 +15,7 @@
  */
 package pro.tremblay.core;
 
-import javax.annotation.Nonnull;
-import javax.annotation.concurrent.ThreadSafe;
+import net.jcip.annotations.ThreadSafe;
 
 /**
  * Type of transactions.
@@ -31,7 +30,7 @@ public enum TransactionType {
         }
 
         @Override
-        public void revert(@Nonnull Position position, @Nonnull Transaction transaction) {
+        public void revert(Position position, Transaction transaction) {
             position.addCash(transaction.getCash());
             position.addSecurityPosition(transaction.getSecurity(), transaction.getQuantity().negate());
         }
@@ -44,7 +43,7 @@ public enum TransactionType {
         }
 
         @Override
-        public void revert(@Nonnull Position position, @Nonnull Transaction transaction) {
+        public void revert(Position position, Transaction transaction) {
             position.addCash(transaction.getCash().negate());
             position.addSecurityPosition(transaction.getSecurity(), transaction.getQuantity());
         }
@@ -57,7 +56,7 @@ public enum TransactionType {
         }
 
         @Override
-        public void revert(@Nonnull Position position, @Nonnull Transaction transaction) {
+        public void revert(Position position, Transaction transaction) {
             position.addCash(transaction.getCash().negate());
         }
 
@@ -70,7 +69,7 @@ public enum TransactionType {
         }
 
         @Override
-        public void revert(@Nonnull Position position, @Nonnull Transaction transaction) {
+        public void revert(Position position, Transaction transaction) {
             position.addCash(transaction.getCash());
         }
     };
@@ -88,6 +87,6 @@ public enum TransactionType {
      * @param position the position on which the transaction will be reverted
      * @param transaction the transaction to revert
      */
-    public abstract void revert(@Nonnull Position position, @Nonnull Transaction transaction);
+    public abstract void revert(Position position, Transaction transaction);
 
 }

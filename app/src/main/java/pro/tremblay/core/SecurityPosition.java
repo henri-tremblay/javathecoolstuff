@@ -15,8 +15,9 @@
  */
 package pro.tremblay.core;
 
-import javax.annotation.Nonnull;
-import javax.annotation.concurrent.NotThreadSafe;
+import net.jcip.annotations.NotThreadSafe;
+import org.jspecify.annotations.NonNull;
+
 import java.util.Objects;
 
 /**
@@ -37,12 +38,12 @@ public class SecurityPosition {
         this.quantity = quantity;
     }
 
-    @Nonnull
+    @NonNull
     public Security getSecurity() {
         return security;
     }
 
-    @Nonnull
+    @NonNull
     public Quantity getQuantity() {
         return quantity;
     }

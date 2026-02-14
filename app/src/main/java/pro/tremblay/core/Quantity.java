@@ -15,8 +15,8 @@
  */
 package pro.tremblay.core;
 
-import javax.annotation.Nonnull;
-import javax.annotation.concurrent.ThreadSafe;
+import net.jcip.annotations.ThreadSafe;
+
 import java.math.BigDecimal;
 import java.util.Objects;
 
@@ -40,21 +40,20 @@ public final class Quantity implements Numeric<Quantity> {
         return new Quantity(BigDecimal.valueOf(value));
     }
 
-    public static Quantity qty(@Nonnull BigDecimal value) {
+    public static Quantity qty(BigDecimal value) {
         return new Quantity(Objects.requireNonNull(value));
     }
 
-    private Quantity(@Nonnull BigDecimal value) {
+    private Quantity(BigDecimal value) {
         this.value = setScale(value);
     }
 
-    public static Quantity qty(@Nonnull String value) {
+    public static Quantity qty(String value) {
         return new Quantity(new BigDecimal(Objects.requireNonNull(value)));
     }
 
-    @Nonnull
     @Override
-    public Quantity fromValue(@Nonnull BigDecimal newValue) {
+    public Quantity fromValue(BigDecimal newValue) {
         return new Quantity(newValue);
     }
 
@@ -62,7 +61,6 @@ public final class Quantity implements Numeric<Quantity> {
         return 0;
     }
 
-    @Nonnull
     @Override
     public BigDecimal value() {
         return value;

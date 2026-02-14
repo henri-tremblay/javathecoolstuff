@@ -15,7 +15,8 @@
  */
 package pro.tremblay.core;
 
-import javax.annotation.concurrent.NotThreadSafe;
+import net.jcip.annotations.NotThreadSafe;
+
 import java.util.AbstractMap;
 import java.util.Collection;
 import java.util.HashMap;

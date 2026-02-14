@@ -15,7 +15,6 @@
  */
 package pro.tremblay.core;
 
-import javax.annotation.Nonnull;
 import java.math.BigDecimal;
 import java.util.Objects;
 
@@ -37,26 +36,25 @@ public final class Amount implements Numeric<Amount> {
         return new Amount(BigDecimal.valueOf(value));
     }
 
-    public static Amount amnt(@Nonnull BigDecimal value) {
+    public static Amount amnt(BigDecimal value) {
         return new Amount(Objects.requireNonNull(value));
     }
 
-    public static Amount amnt(@Nonnull String value) {
+    public static Amount amnt(String value) {
         return new Amount(new BigDecimal(Objects.requireNonNull(value)));
     }
 
-    private Amount(@Nonnull BigDecimal value) {
+    private Amount(BigDecimal value) {
         this.value = setScale(value);
     }
 
-    @Nonnull
     @Override
     public BigDecimal value() {
         return value;
     }
 
     @Override
-    public @Nonnull Amount fromValue(@Nonnull BigDecimal newValue) {
+    public Amount fromValue(BigDecimal newValue) {
         return new Amount(newValue);
     }
 

@@ -17,7 +17,6 @@ package pro.tremblay.core;
 
 import org.junit.jupiter.api.Test;
 
-import javax.annotation.Nonnull;
 import java.math.BigDecimal;
 import java.util.Objects;
 
@@ -29,19 +28,17 @@ class NumericTest {
 
         private final BigDecimal value;
 
-        public ANumeric(@Nonnull BigDecimal value) {
+        public ANumeric(BigDecimal value) {
             this.value = setScale(value);
         }
 
-        @Nonnull
         @Override
         public BigDecimal value() {
             return value;
         }
 
-        @Nonnull
         @Override
-        public ANumeric fromValue(@Nonnull BigDecimal newValue) {
+        public ANumeric fromValue(BigDecimal newValue) {
             return new ANumeric(newValue);
         }
 

@@ -15,11 +15,12 @@
  */
 package pro.tremblay.core;
 
-import javax.annotation.Nonnull;
-import javax.annotation.concurrent.ThreadSafe;
 //import java.net.http.HttpClient;
 //import java.net.http.HttpRequest;
 //import java.net.http.HttpResponse;
+
+import net.jcip.annotations.ThreadSafe;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Service returning security prices. This is actually a fake implementation using randomly generated prices.
@@ -43,8 +44,7 @@ public class RealPriceService implements PriceService {
      * @return the price of the security at a given date
      */
     @Override
-    @Nonnull
-    public Amount getPrice(@Nonnull Security security) {
+    public Amount getPrice(Security security) {
         Amount price = queryPrice(security.symbol());
         if(price == null) {
             throw new IllegalArgumentException("No price found for " + security.symbol());
@@ -52,7 +52,7 @@ public class RealPriceService implements PriceService {
         return price;
     }
 
-    private Amount queryPrice(@Nonnull String ticker) {
+    private @Nullable Amount queryPrice(String ticker) {
 //        var request = HttpRequest.newBuilder(URI.create(baseUrl + "/" + ticker))
 //                .header("Accept", "application/json")
 //                .GET()

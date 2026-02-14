@@ -15,8 +15,8 @@
  */
 package pro.tremblay.core;
 
-import javax.annotation.Nonnull;
-import javax.annotation.concurrent.NotThreadSafe;
+import net.jcip.annotations.NotThreadSafe;
+
 import java.time.LocalDate;
 
 /**
@@ -91,7 +91,7 @@ public class Transaction {
         return this;
     }
 
-    public void revert(@Nonnull Position position) {
+    public void revert(Position position) {
         getType().revert(position, this);
     }
 

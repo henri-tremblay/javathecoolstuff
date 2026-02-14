@@ -15,26 +15,27 @@
  */
 package pro.tremblay.core;
 
-import javax.annotation.Nonnull;
+import org.jspecify.annotations.NonNull;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Objects;
 
 public interface Numeric<T extends Numeric<T>> {
 
-    @Nonnull
+    @NonNull
     BigDecimal value();
 
-    @Nonnull
-    T fromValue(@Nonnull BigDecimal newValue);
+    @NonNull
+    T fromValue(BigDecimal newValue);
 
     int precision();
 
-    default T add(@Nonnull T numeric) {
+    default T add(T numeric) {
         return fromValue(value().add(numeric.value()));
     }
 
-    default T subtract(@Nonnull T numeric) {
+    default T subtract(T numeric) {
         return fromValue(value().subtract(numeric.value()));
     }
 
@@ -59,8 +60,8 @@ public interface Numeric<T extends Numeric<T>> {
             .divide(BigDecimal.valueOf(from), 2, RoundingMode.HALF_UP));
     }
 
-    @Nonnull
-    default BigDecimal setScale(@Nonnull BigDecimal value) {
+    @NonNull
+    default BigDecimal setScale(BigDecimal value) {
         return Objects.requireNonNull(value).setScale(precision(), RoundingMode.HALF_UP);
     }
 }

@@ -15,12 +15,13 @@
  */
 package pro.tremblay.core;
 
-import javax.annotation.concurrent.ThreadSafe;
+import net.jcip.annotations.ThreadSafe;
+
 import java.time.LocalDate;
 import java.util.Objects;
 
 /**
- * Enumeration listing useful available security. In real-life it would be a full-fledged java object but to keep
+ * Enumeration listing useful available security. In real-life it would be a full-fledged java object, but to keep
  * things simple, it's just an enum.
  */
 @ThreadSafe
