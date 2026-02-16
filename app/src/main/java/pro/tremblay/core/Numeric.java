@@ -15,18 +15,14 @@
  */
 package pro.tremblay.core;
 
-import org.jspecify.annotations.NonNull;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Objects;
 
 public interface Numeric<T extends Numeric<T>> {
 
-    @NonNull
     BigDecimal value();
 
-    @NonNull
     T fromValue(BigDecimal newValue);
 
     int precision();
@@ -60,7 +56,6 @@ public interface Numeric<T extends Numeric<T>> {
             .divide(BigDecimal.valueOf(from), 2, RoundingMode.HALF_UP));
     }
 
-    @NonNull
     default BigDecimal setScale(BigDecimal value) {
         return Objects.requireNonNull(value).setScale(precision(), RoundingMode.HALF_UP);
     }

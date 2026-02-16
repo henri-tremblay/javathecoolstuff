@@ -16,6 +16,7 @@
 package pro.tremblay.core;
 
 import net.jcip.annotations.NotThreadSafe;
+import org.jspecify.annotations.Nullable;
 
 import java.time.LocalDate;
 
@@ -73,6 +74,7 @@ public class Transaction {
         return this;
     }
 
+    @Nullable
     public Security getSecurity() {
         return security;
     }
@@ -82,6 +84,7 @@ public class Transaction {
         return this;
     }
 
+    @Nullable
     public Quantity getQuantity() {
         return quantity;
     }
