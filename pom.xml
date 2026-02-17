@@ -16,23 +16,37 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>pro.tremblay.core</groupId>
     <artifactId>javathecoolstuff-parent</artifactId>
     <version>${revision}</version>
-    <inceptionYear>2022</inceptionYear>
     <packaging>pom</packaging>
+    <inceptionYear>2022</inceptionYear>
+
+    <modules>
+        <module>past</module>
+        <module>present</module>
+    </modules>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>8</java.version>
+        <jdk.version>25</jdk.version>
+
+        <!-- license plugin -->
+        <license.header>${project.basedir}/header.txt</license.header>
+
+        <!-- sortpom configuration -->
+        <sort.createBackupFile>false</sort.createBackupFile>
+        <sort.expandEmptyElements>false</sort.expandEmptyElements>
+        <sort.nrOfIndentSpace>4</sort.nrOfIndentSpace>
 
         <jacoco-maven-plugin.version>0.8.14</jacoco-maven-plugin.version>
         <spotbugs-maven-plugin.version>4.9.8.2</spotbugs-maven-plugin.version>
+
+        <jmh.version>1.37</jmh.version>
     </properties>
 
     <dependencyManagement>
@@ -104,6 +118,10 @@
                     <version>3.1.4</version>
                 </plugin>
                 <plugin>
+                    <artifactId>maven-enforcer-plugin</artifactId>
+                    <version>3.6.2</version>
+                </plugin>
+                <plugin>
                     <artifactId>maven-install-plugin</artifactId>
                     <version>3.1.4</version>
                 </plugin>
@@ -114,6 +132,10 @@
                 <plugin>
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <version>3.12.0</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-remote-resources-plugin</artifactId>
+                    <version>3.3.0</version>
                 </plugin>
                 <plugin>
                     <artifactId>maven-resources-plugin</artifactId>
@@ -159,6 +181,7 @@
                         </dependency>
                     </dependencies>
                 </plugin>
+
             </plugins>
         </pluginManagement>
 
@@ -166,19 +189,21 @@
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
-<!--                    <release>${java.version}</release>-->
-<!--                    <compilerArgs>-->
-<!--                        <arg>&#45;&#45;enable-preview</arg>-->
-<!--                        <arg>&#45;&#45;add-modules=jdk.incubator.concurrent</arg>-->
-<!--                    </compilerArgs>-->
+                    <release>${jdk.version}</release>
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
-                <version>3.6.2</version>
+                <configuration>
+                    <rules>
+                        <requireMavenVersion>
+                            <version>[3.8,)</version>
+                        </requireMavenVersion>
+                        <requireJavaVersion>
+                            <version>[{jdk.version},)</version>
+                        </requireJavaVersion>
+                    </rules>
+                </configuration>
                 <executions>
                     <execution>
                         <id>enforce-versions</id>
@@ -187,24 +212,7 @@
                         </goals>
                     </execution>
                 </executions>
-                <configuration>
-                    <rules>
-                        <requireMavenVersion>
-                            <version>[3.8,)</version>
-                        </requireMavenVersion>
-                        <requireJavaVersion>
-                            <version>[{$java.version},)</version>
-                        </requireJavaVersion>
-                    </rules>
-                </configuration>
             </plugin>
-            <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-<!--                    <argLine>&#45;&#45;enable-preview &#45;&#45;add-modules=jdk.incubator.concurrent</argLine>-->
-                </configuration>
-            </plugin>
-
             <plugin>
                 <groupId>com.keyboardsamurais.maven</groupId>
                 <artifactId>maven-timestamp-plugin</artifactId>
@@ -222,12 +230,11 @@
                     </execution>
                 </executions>
             </plugin>
-
             <plugin>
                 <groupId>com.mycila</groupId>
                 <artifactId>license-maven-plugin</artifactId>
                 <configuration>
-                    <header>${project.basedir}/header.txt</header>
+                    <header>${license.header}</header>
                     <strictCheck>true</strictCheck>
                     <mapping>
                         <java>SLASHSTAR_STYLE</java>
@@ -253,11 +260,18 @@
                         <year>${year}</year>
                     </properties>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>check</id>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
 
             <plugin>
                 <artifactId>maven-remote-resources-plugin</artifactId>
-                <version>3.3.0</version>
                 <executions>
                     <execution>
                         <goals>
@@ -276,12 +290,40 @@
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>${jacoco-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>default-prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>default-report</id>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                        <phase>prepare-package</phase>
+                    </execution>
+                </executions>
             </plugin>
 
             <plugin>
                 <groupId>com.github.spotbugs</groupId>
                 <artifactId>spotbugs-maven-plugin</artifactId>
                 <version>${spotbugs-maven-plugin.version}</version>
+            </plugin>
+
+            <plugin>
+                <groupId>com.github.ekryd.sortpom</groupId>
+                <artifactId>sortpom-maven-plugin</artifactId>
+                <version>3.4.1</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>sort</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
 
         </plugins>
@@ -294,33 +336,17 @@
                 <artifactId>maven-project-info-reports-plugin</artifactId>
                 <version>3.9.0</version>
             </plugin>
+            <plugin>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-maven-plugin</artifactId>
+                <version>${spotbugs-maven-plugin.version}</version>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco-maven-plugin.version}</version>
+            </plugin>
         </plugins>
     </reporting>
 
-    <profiles>
-        <profile>
-            <id>fullBuild</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>com.mycila</groupId>
-                        <artifactId>license-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>check</id>
-                                <goals>
-                                    <goal>check</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
-
-    <modules>
-        <module>app</module>
-        <module>benchmark</module>
-    </modules>
 </project>
