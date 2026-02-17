@@ -1,0 +1,16 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Main-past" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="pro.tremblay.core.Main" />
+    <module name="app-past" />
+    <option name="WORKING_DIRECTORY" value="$ModuleFileDir$" />
+    <extension name="coverage">
+      <pattern>
+        <option name="PATTERN" value="pro.tremblay.core.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+    </extension>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
