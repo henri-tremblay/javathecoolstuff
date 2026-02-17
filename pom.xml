@@ -33,6 +33,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <maven.build.timestamp.format>yyyy</maven.build.timestamp.format>
         <jdk.version>25</jdk.version>
 
         <!-- license plugin -->
@@ -230,23 +231,6 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>com.keyboardsamurais.maven</groupId>
-                <artifactId>maven-timestamp-plugin</artifactId>
-                <version>1.0</version>
-                <executions>
-                    <execution>
-                        <id>year</id>
-                        <goals>
-                            <goal>create</goal>
-                        </goals>
-                        <configuration>
-                            <propertyName>year</propertyName>
-                            <timestampPattern>yyyy</timestampPattern>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <groupId>com.mycila</groupId>
                 <artifactId>license-maven-plugin</artifactId>
                 <configuration>
@@ -273,7 +257,7 @@
                     </excludes>
                     <properties>
                         <inceptionYear>${project.inceptionYear}</inceptionYear>
-                        <year>${year}</year>
+                        <year>${maven.build.timestamp}</year>
                     </properties>
                 </configuration>
                 <executions>
