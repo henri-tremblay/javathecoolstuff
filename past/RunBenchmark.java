@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pro.tremblay.core;
 
 import java.lang.System;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 /**
  * Script to run the benchmarks quickly. It compiles and run.
@@ -24,10 +25,14 @@ public class RunBenchmark {
     public static void main(String[] args) throws Exception {
         if (args.length == 0) {
             System.out.println("Usage: RunBenchmarkSuite.java benchmark_name");
+            System.out.println("Available benchmarks:");
+            Files.list(Paths.get("benchmark/src/main/java/pro/tremblay/core/benchmark"))
+                .map(path -> path.getFileName().toString().replace(".java", ""))
+                .forEach(path -> System.out.println("- " + path));
             System.exit(1);
         }
         command("mvnd", "package", "-DskipTests", "-Denforcer.skip=true", "-Dmaven.javadoc.skip=true");
-        command("java", "-jar", "benchmark/target/benchmarks.jar", args[0]);
+        command("java", "-jar", "benchmark/target/benchmarks.jar", "pro.tremblay.core.benchmark." + args[0]);
     }
 
     private static void command(String... args) throws Exception {

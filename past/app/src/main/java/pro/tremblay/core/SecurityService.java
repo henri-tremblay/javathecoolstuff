@@ -71,7 +71,13 @@ public class SecurityService {
 
     public Security findForTicker(String ticker) {
         loadSecurities();
-        return allSecurities.get(ticker);
+        Security[] pointer = new Security[1];
+        allSecurities.forEach((k, v) -> {
+            if (k.equals(ticker)) {
+                pointer[0] = v;
+            }
+        });
+        return pointer[0];
     }
 
     private Map<String, Security> readFile(Path file, Function<String, Security> mapper) {

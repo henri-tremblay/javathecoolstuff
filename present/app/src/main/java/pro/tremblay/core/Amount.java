@@ -18,39 +18,28 @@ package pro.tremblay.core;
 import java.math.BigDecimal;
 import java.util.Objects;
 
-public final class Amount implements Numeric<Amount> {
+public record Amount(BigDecimal value) implements Numeric<Amount> {
 
     private static final Amount ZERO = new Amount(BigDecimal.ZERO);
-
-    private final BigDecimal value;
 
     public static Amount zero() {
         return ZERO;
     }
 
-    public static Amount amnt(double value) {
-        return new Amount(BigDecimal.valueOf(value));
+    public Amount(BigDecimal value) {
+        this.value = setScale(Objects.requireNonNull(value));
     }
 
-    public static Amount amnt(long value) {
-        return new Amount(BigDecimal.valueOf(value));
+    public Amount(double value) {
+        this(BigDecimal.valueOf(value));
     }
 
-    public static Amount amnt(BigDecimal value) {
-        return new Amount(Objects.requireNonNull(value));
+    public Amount(long value) {
+        this(BigDecimal.valueOf(value));
     }
 
-    public static Amount amnt(String value) {
-        return new Amount(new BigDecimal(Objects.requireNonNull(value)));
-    }
-
-    private Amount(BigDecimal value) {
-        this.value = setScale(value);
-    }
-
-    @Override
-    public BigDecimal value() {
-        return value;
+    public Amount(String value) {
+        this(new BigDecimal(Objects.requireNonNull(value)));
     }
 
     @Override
@@ -73,20 +62,4 @@ public final class Amount implements Numeric<Amount> {
         return value.toPlainString() + "$";
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof Amount)) {
-            return false;
-        }
-        Amount a = (Amount) o;
-        return value.equals(a.value);
-    }
-
-    @Override
-    public int hashCode() {
-        return value.hashCode();
-    }
 }

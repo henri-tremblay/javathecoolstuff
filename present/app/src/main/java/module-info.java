@@ -19,4 +19,13 @@ import org.jspecify.annotations.NullMarked;
 module app {
     requires org.jspecify;
     requires jcip.annotations;
+    requires java.net.http;
+    requires jdk.httpserver;
+
+    exports pro.tremblay.core;
+    exports pro.tremblay.core.generator;
+    exports pro.tremblay.core.position;
+    exports pro.tremblay.core.price;
+    exports pro.tremblay.core.security;
+    exports pro.tremblay.core.transaction;
 }

@@ -1,12 +1,13 @@
 /.idea/
 target/
 dependency-reduced-pom.xml
-/data/transaction.csv
-/data/positions.csv
-/data/transactions.csv
-/result.html
+/data/*.csv
+!/data/securities.csv
+/past/result.html
 /cheat.md
 /synopsis.md
 /myjre
 /myapp.app
 /myapp-*.dmg
+*.jfr
+*.aot

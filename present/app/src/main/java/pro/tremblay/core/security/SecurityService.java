@@ -13,23 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pro.tremblay.core;
+package pro.tremblay.core.security;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.UncheckedIOException;
-import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class SecurityService {
 
@@ -61,42 +57,17 @@ public class SecurityService {
     }
 
     public Security findForTicker(String ticker) {
-        Security[] pointer = new Security[1];
-        allSecurities.get().forEach((k, v) -> {
-            if (k.equals(ticker)) {
-                pointer[0] = v;
-            }
-        });
-        return pointer[0];
+        return allSecurities.get().get(ticker);
     }
 
     private Map<String, Security> readFile(Path file, Function<String, Security> mapper) {
-        BufferedReader in;
-        try {
-            in = new BufferedReader(new InputStreamReader(new FileInputStream(file.toFile()), Charset.forName("UTF-8")));
-        }
-        catch(FileNotFoundException e) {
+        try (Stream<String> lines = Files.lines(file)){
+            return lines
+                .skip(1) // skip the header
+                .map(mapper)
+                .collect(Collectors.toMap(Security::symbol, Function.identity()));
+        } catch (IOException e) {
             throw new UncheckedIOException(e);
-        }
-        try {
-            Map<String, Security> map = new HashMap<>();
-            String s = in.readLine(); // skip first line
-            while((s = in.readLine()) != null) {
-                Security security = mapper.apply(s);
-                map.put(security.symbol(), security);
-            }
-            return map;
-        }
-        catch(IOException e) {
-            throw new UncheckedIOException(e);
-        }
-        finally {
-            try {
-                in.close();
-            }
-            catch(IOException e) {
-                // ignore silently
-            }
         }
     }
 }

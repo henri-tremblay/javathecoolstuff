@@ -13,25 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pro.tremblay.core;
+package pro.tremblay.core.position;
 
-import org.junit.jupiter.api.Test;
+import net.jcip.annotations.ThreadSafe;
+import pro.tremblay.core.Quantity;
+import pro.tremblay.core.security.Security;
 
-import java.nio.file.Paths;
+/**
+ * Quantity possessed of a given security.
+ */
+@ThreadSafe
+public record SecurityPosition(Security security, Quantity quantity) {
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-class SecurityServiceTest {
-
-    private final SecurityService securityService = new SecurityService(Paths.get("../../data/securities_short.csv"));
-
-    @Test
-    void allSecurities() {
-        assertThat(securityService.allSecurities()).containsExactlyInAnyOrderElementsOf(SecuritiesForTest.SECURITIES);
+    public boolean isFlat() {
+        return quantity.isZero();
     }
 
-    @Test
-    void findForTicker() {
-        assertThat(securityService.findForTicker("IBM")).isEqualTo(SecuritiesForTest.IBM);
-    }
 }

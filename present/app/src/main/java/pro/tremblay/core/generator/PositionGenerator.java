@@ -13,36 +13,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pro.tremblay.core;
+package pro.tremblay.core.generator;
+
+import pro.tremblay.core.FileProvider;
+import pro.tremblay.core.security.Security;
+import pro.tremblay.core.security.SecurityService;
 
 import java.io.BufferedWriter;
 import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
+import java.util.random.RandomGenerator;
 
 public class PositionGenerator {
 
-    public static void main(String[] args) throws Exception {
-        SecurityService securityService = new SecurityService(Paths.get("listing_status.csv"));
+    public static final int POSITION_COUNT = 50;
+
+    static void main() throws Exception {
+        FileProvider fileProvider = new FileProvider();
+        SecurityService securityService = new SecurityService(fileProvider.securityFile());
         List<Security> securities = new ArrayList<>(securityService.allSecurities());
-        // Let's add CASH
-        securities.add(new Security("CASH", "Cash position", "FOREX", "FX", LocalDate.now()));
 
-        Random random = new Random();
-        try (BufferedWriter out = Files.newBufferedWriter(Paths.get("positions.csv"), StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE)) {
-
-            for (int i = 0; i < 1_000_000; i++) {
-                Security security = securities.get(random.nextInt(securities.size()));
-                long quantity = 1 + random.nextInt(999);
+        RandomGenerator random = RandomGenerator.getDefault();
+        try (BufferedWriter out = Files.newBufferedWriter(fileProvider.positionFile())) {
+            for (int i = 0; i < POSITION_COUNT; i++) {
+                // remove to prevent duplicates
+                Security security = securities.remove(random.nextInt(securities.size()));
+                long quantity = random.nextInt(1, 1000);
                 out.write(security.symbol());
                 out.write(",");
                 out.write("" + quantity);
                 out.newLine();
             }
+
+            // Add CASH position at the end
+            out.write("CASH,1000000");
+            out.newLine();
         }
     }
 

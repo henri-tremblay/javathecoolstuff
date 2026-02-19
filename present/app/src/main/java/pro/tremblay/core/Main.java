@@ -15,53 +15,103 @@
  */
 package pro.tremblay.core;
 
+import com.sun.net.httpserver.HttpServer;
+import pro.tremblay.core.position.Position;
+import pro.tremblay.core.position.PositionReader;
+import pro.tremblay.core.price.PriceService;
+import pro.tremblay.core.security.SecurityService;
+import pro.tremblay.core.transaction.Transaction;
+import pro.tremblay.core.transaction.TransactionReader;
+
 import java.io.IOException;
+import java.io.OutputStream;
+import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.List;
 
 public class Main {
 
-    private static final String TEMPLATE = "<!DOCTYPE html>\n" +
-        "<html lang=\"en\">\n" +
-        "<head>\n" +
-        "    <meta charset=\"UTF-8\">\n" +
-        "    <title>Return on investment</title>\n" +
-        "    <link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css\" integrity=\"sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T\" crossorigin=\"anonymous\">" +
-        "</head>\n" +
-        "<body>\n" +
-        "    <div class=\"alert alert-primary\" role=\"alert\">\n" +
-        "        Portfolio value at the beginning of the year: ${initialValue}<br>\n" +
-        "        Portfolio value now: ${currentValue}\n" +
-        "    </div>" +
-        "</body>\n" +
-        "</html>";
+    private static final String TEMPLATE = """
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta http-equiv="refresh" content="5">
+            <title>Return on investment</title>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">\
+        </head>
+        <body>
+            <div class="alert alert-primary" role="alert">
+                Valeur du portefeuille: %s<br>
+                Valeur il y a un an: %s<br>
+            </div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Symbol</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                %s
+                </tbody>
+            </table>
+        </body>
+        </html>""";
 
-    public static void main(String[] args) throws IOException {
-        SecurityService securityService = new SecurityService(Paths.get("securities.csv"));
+    void main() throws IOException {
+        FileProvider fileProvider = new FileProvider();
+
+        SecurityService securityService = new SecurityService(fileProvider.securityFile());
         PositionReader positionReader = new PositionReader(securityService);
-        PriceService priceService = new FakePriceService();
         TransactionReader transactionReader = new TransactionReader(securityService);
 
-        Position current = positionReader.readFromFile(Paths.get("positions.csv"));
-        List<Transaction> transactions = transactionReader.read(Paths.get("transactions.csv"));
+        Position current = positionReader.readFromFile(fileProvider.positionFile());
+        List<Transaction> transactions = transactionReader.read(fileProvider.transactionFile());
 
-        Amount currentAmount = current.securityPositionValue(priceService);
-        Position initial = current.copy();
-        initial.revert(transactions);
-        Amount initialAmount = initial.securityPositionValue(priceService);
+        try (PriceService priceService = new PriceService("http://localhost:8000")) {
+            HttpServer server = launchServer();
+            server.createContext("/", exchange -> {
+                Amount currentAmount = current.securityPositionValue(priceService);
+                Position initial = current.copy();
+                initial.revert(transactions);
+                Amount initialAmount = initial.securityPositionValue(priceService);
 
-        String result = TEMPLATE
-            .replace("${initialValue}", initialAmount.toString())
-            .replace("${currentValue}", currentAmount.toString());
-        Files.write(Paths.get("result.html"), result.getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+                String positions = current.getSecurityPositions().stream()
+                    .map(sp -> String.format("<tr><td>%s</td><td>%s</td><td>%s</td></tr>",
+                        sp.security().symbol(),
+                        sp.quantity(),
+                        priceService.getPrice(sp.security())))
+                    .collect(java.util.stream.Collectors.joining("\n"));
 
-        System.out.println(result);
+                String result = TEMPLATE.formatted(initialAmount, currentAmount, positions);
+                byte[] body = result.getBytes(StandardCharsets.UTF_8);
+                exchange.getResponseHeaders().set("Content-Type", "text/html; charset=utf-8");
+                exchange.sendResponseHeaders(200, body.length);
+                try (exchange; OutputStream os = exchange.getResponseBody()) {
+                    os.write(body);
+                }
+            });
+            IO.readln("Type any key to stop the server");
+            server.stop(0);
+        }
+    }
+
+    private HttpServer launchServer() throws IOException {
+        var server = HttpServer.create(new InetSocketAddress(8080), 0);
+        server.start();
+        return server;
     }
 
 }
+
+// PID=$(jcmd -l | grep "pro.tremblay.core.Main" | cut -d' ' -f1)
+// jcmd $PID JFR.start name=on_demand settings=profile jdk.ExecutionSample#period=1ms jdk.NativeMethodSample#period=1ms
+// jcmd $PID JFR.check
+// jcmd $PID JFR.dump name=on_demand filename=app.jfr
+// jcmd $PID JFR.stop name=on_demand
+// jfr summary app.jfr
 
 // jdeps app/target/app-1.0-SNAPSHOT.jar
 // jlink --add-modules java.base,java.net.http --output myjre --no-header-files --no-man-pages --strip-java-debug-attributes --strip-debug --compress=2

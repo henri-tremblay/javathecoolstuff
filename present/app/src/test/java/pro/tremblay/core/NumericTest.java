@@ -15,56 +15,36 @@
  */
 package pro.tremblay.core;
 
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
-import java.util.Objects;
 
 import static pro.tremblay.core.Assertions.assertThat;
 
 class NumericTest {
 
-    private static class ANumeric implements Numeric<ANumeric> {
+    private record ANumeric(BigDecimal value) implements Numeric<ANumeric> {
 
-        private final BigDecimal value;
+            private ANumeric(BigDecimal value) {
+                this.value = setScale(value);
+            }
 
-        public ANumeric(BigDecimal value) {
-            this.value = setScale(value);
+            @Override
+            public ANumeric fromValue(@NonNull BigDecimal newValue) {
+                return new ANumeric(newValue);
+            }
+
+            @Override
+            public int precision() {
+                return 1;
+            }
+
+            @Override
+            public @NonNull String toString() {
+                return value.toPlainString();
+            }
         }
-
-        @Override
-        public BigDecimal value() {
-            return value;
-        }
-
-        @Override
-        public ANumeric fromValue(BigDecimal newValue) {
-            return new ANumeric(newValue);
-        }
-
-        @Override
-        public int precision() {
-            return 1;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            ANumeric aNumeric = (ANumeric) o;
-            return value.equals(aNumeric.value);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(value);
-        }
-
-        @Override
-        public String toString() {
-            return value.toPlainString();
-        }
-    }
 
     ANumeric a1 = n("1.2");
     ANumeric a2 = n("1.3");
@@ -97,11 +77,6 @@ class NumericTest {
     @Test
     void negate() {
         assertThat(a1.negate()).isEqualTo("-1.2");
-    }
-
-    @Test
-    void scale() {
-        assertThat(a1.scale(100, 200)).isEqualTo("2.4");
     }
 
     @Test

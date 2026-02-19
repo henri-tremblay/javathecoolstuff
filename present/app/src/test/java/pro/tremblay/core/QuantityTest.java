@@ -15,43 +15,40 @@
  */
 package pro.tremblay.core;
 
+import nl.jqno.equalsverifier.EqualsVerifier;
+import nl.jqno.equalsverifier.Warning;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 
 import static pro.tremblay.core.Assertions.assertThat;
-import static pro.tremblay.core.Quantity.qty;
 
 class QuantityTest {
 
     @Test
     void quantityInteger() {
-        assertThat(qty(12L)).isEqualTo("12");
+        assertThat(new Quantity(12L)).isEqualTo("12");
     }
 
     @Test
     void quantityBigDecimal() {
-        assertThat(qty(BigDecimal.valueOf(12))).isEqualTo("12");
+        assertThat(new Quantity(BigDecimal.valueOf(12))).isEqualTo("12");
     }
 
     @Test
     void quantityString() {
-        assertThat(qty("12")).isEqualTo("12");
+        assertThat(new Quantity("12")).isEqualTo("12");
     }
 
     @Test
     void testToString() {
-        assertThat(qty(12).toString()).isEqualTo("12");
+        assertThat(new Quantity(12).toString()).isEqualTo("12");
     }
 
     @Test
-    void testEquals() {
-        assertThat(qty("12").equals(qty("12"))).isTrue();
-        assertThat(qty("12").equals(qty("13"))).isFalse();
-    }
-
-    @Test
-    void testHashCode() {
-        assertThat(qty("12.4").hashCode()).isEqualTo(qty("12.4").hashCode());
+    void equalsHashcode() {
+        EqualsVerifier.forClass(Quantity.class)
+            .suppress(Warning.NULL_FIELDS)
+            .verify();
     }
 }

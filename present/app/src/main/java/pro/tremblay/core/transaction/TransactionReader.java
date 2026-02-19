@@ -13,13 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pro.tremblay.core;
+package pro.tremblay.core.transaction;
+
+import pro.tremblay.core.Amount;
+import pro.tremblay.core.Quantity;
+import pro.tremblay.core.security.Security;
+import pro.tremblay.core.security.SecurityService;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -35,13 +41,19 @@ public class TransactionReader {
         try (Stream<String> lines = Files.lines(transactionFile)) {
             return lines
                 .map(line -> line.split(",", 5))
-                .map(tokens -> Transaction.transaction()
-                    .type(TransactionType.valueOf(tokens[0]))
-                    .date(LocalDate.parse(tokens[1]))
-                    .cash(Amount.amnt(tokens[2]))
-                    .quantity(tokens[3].isEmpty() ? null : Quantity.qty(tokens[3]))
-                    .security(tokens[4].isEmpty() ? null : securityService.findForTicker(tokens[4]))
-                )
+                .map(tokens -> {
+                    TransactionType type = TransactionType.valueOf(tokens[0]);
+                    LocalDate date = LocalDate.parse(tokens[1]);
+                    Amount cash = new Amount(tokens[2]);
+                    Quantity quantity = tokens[3].isEmpty() ? null : new Quantity(tokens[3]);
+                    Security security = tokens[4].isEmpty() ? null : securityService.findForTicker(tokens[4]);
+                    return switch (type) {
+                        case BUY -> Transaction.buy(date, cash, Objects.requireNonNull(security), Objects.requireNonNull(quantity));
+                        case SELL -> Transaction.sell(date, cash, Objects.requireNonNull(security), Objects.requireNonNull(quantity));
+                        case DEPOSIT -> Transaction.deposit(date, cash);
+                        case WITHDRAWAL -> Transaction.withdrawal(date, cash);
+                    };
+                })
                 .collect(Collectors.toList());
         } catch (IOException e) {
             throw new RuntimeException(e);

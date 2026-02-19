@@ -15,8 +15,9 @@
  */
 package pro.tremblay.core;
 
+import pro.tremblay.core.security.Security;
+
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.List;
 
 public class SecuritiesForTest {
@@ -30,5 +31,5 @@ public class SecuritiesForTest {
     public static final Security INTC = new Security("INTC", "Intel Corp", "NASDAQ",
         "Stock" ,LocalDate.of(1980, 3, 17));
 
-    public static final List<Security> SECURITIES = Arrays.asList(AAPL, GOOGL, IBM, INTC);
+    public static final List<Security> SECURITIES = List.of(AAPL, GOOGL, IBM, INTC);
 }

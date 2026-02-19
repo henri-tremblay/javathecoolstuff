@@ -15,29 +15,15 @@
  */
 package pro.tremblay.core.benchmark;
 
-import org.openjdk.jmh.annotations.Benchmark;
-import org.openjdk.jmh.annotations.BenchmarkMode;
-import org.openjdk.jmh.annotations.Fork;
-import org.openjdk.jmh.annotations.Level;
-import org.openjdk.jmh.annotations.Measurement;
-import org.openjdk.jmh.annotations.Mode;
-import org.openjdk.jmh.annotations.OutputTimeUnit;
-import org.openjdk.jmh.annotations.Scope;
-import org.openjdk.jmh.annotations.Setup;
-import org.openjdk.jmh.annotations.State;
-import org.openjdk.jmh.annotations.Warmup;
-import pro.tremblay.core.Amount;
-import pro.tremblay.core.FakePriceService;
-import pro.tremblay.core.Position;
-import pro.tremblay.core.PositionReader;
-import pro.tremblay.core.PriceService;
-import pro.tremblay.core.SecurityService;
+import module jmh.core;
+import module app;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.TimeUnit;
 
-@BenchmarkMode(Mode.SingleShotTime)
+@BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 @Warmup(iterations = 10, time = 1)
 @Measurement(iterations = 5, time = 2)
@@ -45,14 +31,14 @@ import java.util.concurrent.TimeUnit;
 @State(Scope.Benchmark)
 public class PositionBenchmark {
 
-    PriceService priceService = new FakePriceService();
+    PriceService priceService = new PriceService("http://localhost:8000");
     Position current;
 
     @Setup(Level.Trial)
     public void setUp() throws IOException {
-        SecurityService securityService = new SecurityService(Paths.get("../../data/securities.csv"));
+        SecurityService securityService = new SecurityService(Path.of("../data/securities.csv"));
         PositionReader positionReader = new PositionReader(securityService);
-        current = positionReader.readFromFile(Paths.get("../../data/positions.csv"));
+        current = positionReader.readFromFile(Paths.get("../data/positions_long.csv"));
     }
 
     @Benchmark

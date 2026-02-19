@@ -16,8 +16,8 @@
 
 -->
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Main-present" type="Application" factoryName="Application">
-    <option name="MAIN_CLASS_NAME" value="pro.tremblay.core.Main" />
+  <configuration default="false" name="TransactionGenerator" type="Application" factoryName="Application" nameIsGenerated="true">
+    <option name="MAIN_CLASS_NAME" value="pro.tremblay.core.generator.TransactionGenerator" />
     <module name="app" />
     <option name="WORKING_DIRECTORY" value="$ModuleFileDir$" />
     <extension name="coverage">

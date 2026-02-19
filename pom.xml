@@ -56,13 +56,11 @@
                 <groupId>org.jspecify</groupId>
                 <artifactId>jspecify</artifactId>
                 <version>1.0.0</version>
-                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>net.jcip</groupId>
                 <artifactId>jcip-annotations</artifactId>
                 <version>1.0</version>
-                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>org.junit</groupId>
@@ -70,6 +68,12 @@
                 <version>6.0.3</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.tngtech.archunit</groupId>
+                <artifactId>archunit-junit5</artifactId>
+                <version>1.4.1</version>
+                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.junit-pioneer</groupId>
@@ -93,6 +97,12 @@
                 <groupId>org.objenesis</groupId>
                 <artifactId>objenesis</artifactId>
                 <version>3.5</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>nl.jqno.equalsverifier</groupId>
+                <artifactId>equalsverifier</artifactId>
+                <version>4.3.1</version>
                 <scope>test</scope>
             </dependency>
             <dependency>

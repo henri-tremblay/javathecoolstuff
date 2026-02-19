@@ -13,7 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pro.tremblay.core;
+package pro.tremblay.core.position;
+
+import pro.tremblay.core.Quantity;
+import pro.tremblay.core.security.SecurityService;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -34,12 +37,13 @@ public class PositionReader {
         }
         Position position = Position.position();
         try (Stream<String> lines = Files.lines(file)) {
-            lines.map(line -> line.split(","))
-                .map(tokens -> new Object() {
-                    final Security security = securityService.findForTicker(tokens[0]);
-                    final Quantity quantity = Quantity.qty(Long.parseLong(tokens[1]));
-                })
-                .forEach(tuple -> position.addSecurityPosition(tuple.security, tuple.quantity));
+            lines
+                .map(line -> line.split(","))
+                .map(tokens -> new SecurityPosition(
+                    securityService.findForTicker(tokens[0]),
+                    new Quantity(Long.parseLong(tokens[1]))
+                ))
+                .forEach(tuple -> position.addSecurityPosition(tuple.security(), tuple.quantity()));
         }
         return position;
     }

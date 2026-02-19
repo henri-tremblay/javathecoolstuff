@@ -13,25 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pro.tremblay.core;
+package pro.tremblay.core.transaction;
 
-import org.junit.jupiter.api.Test;
-
-import java.nio.file.Paths;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
-class SecurityServiceTest {
-
-    private final SecurityService securityService = new SecurityService(Paths.get("../../data/securities_short.csv"));
-
-    @Test
-    void allSecurities() {
-        assertThat(securityService.allSecurities()).containsExactlyInAnyOrderElementsOf(SecuritiesForTest.SECURITIES);
-    }
-
-    @Test
-    void findForTicker() {
-        assertThat(securityService.findForTicker("IBM")).isEqualTo(SecuritiesForTest.IBM);
-    }
+/**
+ * Type of transactions.
+ */
+public enum TransactionType {
+    /** Securities were bought using cash */
+    BUY,
+    /** Securities were sold to get cash */
+    SELL,
+    /** Cash was added to the position */
+    DEPOSIT,
+    /** Cash was removed from the position */
+    WITHDRAWAL;
 }

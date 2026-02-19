@@ -13,27 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pro.tremblay.core;
+package pro.tremblay.core.position;
 
 import org.junit.jupiter.api.Test;
-
-import java.time.LocalDate;
+import pro.tremblay.core.Amount;
+import pro.tremblay.core.Quantity;
+import pro.tremblay.core.SecuritiesForTest;
+import pro.tremblay.core.price.PriceService;
 
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.mock;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
-import static pro.tremblay.core.Amount.amnt;
 import static pro.tremblay.core.Assertions.assertThat;
-import static pro.tremblay.core.Position.position;
-import static pro.tremblay.core.Quantity.qty;
+import static pro.tremblay.core.position.Position.position;
 
 class PositionTest {
 
     private Position position = position()
-        .cash(amnt(10))
-        .addSecurityPosition(SecuritiesForTest.GOOGL, qty(22))
-        .addSecurityPosition(SecuritiesForTest.AAPL, qty(11));
+        .cash(new Amount(10))
+        .addSecurityPosition(SecuritiesForTest.GOOGL, new Quantity(22))
+        .addSecurityPosition(SecuritiesForTest.AAPL, new Quantity(11));
 
     @Test
     void copy() {
@@ -47,31 +47,29 @@ class PositionTest {
 
     @Test
     void addCash() {
-        position.addCash(amnt(200));
+        position.addCash(new Amount(200));
         assertThat(position.getCash()).isEqualTo("210.00");
     }
 
     @Test
     void addSecurity_existing() {
-        position.addSecurityPosition(SecuritiesForTest.GOOGL, qty(30));
+        position.addSecurityPosition(SecuritiesForTest.GOOGL, new Quantity(30));
         Quantity securityPosition = position.getSecurityPosition(SecuritiesForTest.GOOGL);
         assertThat(securityPosition).isEqualTo("52");
     }
 
     @Test
     void addSecurity_new() {
-        position.addSecurityPosition(SecuritiesForTest.IBM, qty(30));
+        position.addSecurityPosition(SecuritiesForTest.IBM, new Quantity(30));
         Quantity securityPosition = position.getSecurityPosition(SecuritiesForTest.IBM);
         assertThat(securityPosition).isEqualTo("30");
     }
 
     @Test
     void securityPositionValue() {
-        LocalDate now = LocalDate.now();
-
-        RealPriceService priceService = mock(RealPriceService.class);
-        expect(priceService.getPrice(SecuritiesForTest.GOOGL)).andStubReturn(amnt(10));
-        expect(priceService.getPrice(SecuritiesForTest.AAPL)).andStubReturn(amnt(5));
+        PriceService priceService = mock(PriceService.class);
+        expect(priceService.getPrice(SecuritiesForTest.GOOGL)).andStubReturn(new Amount(10));
+        expect(priceService.getPrice(SecuritiesForTest.AAPL)).andStubReturn(new Amount(5));
         replay(priceService);
 
         Amount result = position.securityPositionValue(priceService);
@@ -80,12 +78,10 @@ class PositionTest {
 
     @Test
     void securityPositionValue_noPriceNeededForFlatPosition() {
-        LocalDate now = LocalDate.now();
-
         position = position()
-            .addSecurityPosition(SecuritiesForTest.AAPL, qty(0));
+            .addSecurityPosition(SecuritiesForTest.AAPL, new Quantity(0));
 
-        RealPriceService priceService = mock(RealPriceService.class);
+        PriceService priceService = mock(PriceService.class);
         replay(priceService);
 
         Amount result = position.securityPositionValue(priceService);
@@ -108,8 +104,8 @@ class PositionTest {
     @Test
     void addSecurityPositions() {
         position.addSecurityPositions(
-            SecurityPosition.securityPosition(SecuritiesForTest.IBM, qty(100)),
-            SecurityPosition.securityPosition(SecuritiesForTest.INTC, qty(200)));
+            new SecurityPosition(SecuritiesForTest.IBM, new Quantity(100)),
+            new SecurityPosition(SecuritiesForTest.INTC, new Quantity(200)));
         assertThat(position.getSecurityPosition(SecuritiesForTest.IBM)).isEqualTo("100");
         assertThat(position.getSecurityPosition(SecuritiesForTest.INTC)).isEqualTo("200");
         assertThat(position.getSecurityPosition(SecuritiesForTest.GOOGL)).isEqualTo("22");

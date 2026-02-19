@@ -13,17 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pro.tremblay.core;
+package pro.tremblay.core.security;
 
 import org.junit.jupiter.api.Test;
-
-import java.nio.file.Paths;
+import pro.tremblay.core.FileProvider;
+import pro.tremblay.core.SecuritiesForTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class SecurityServiceTest {
 
-    private final SecurityService securityService = new SecurityService(Paths.get("../../data/securities_short.csv"));
+    private final FileProvider fileProvider = new FileProvider();
+    private final SecurityService securityService = new SecurityService(fileProvider.shortSecurityFile());
 
     @Test
     void allSecurities() {

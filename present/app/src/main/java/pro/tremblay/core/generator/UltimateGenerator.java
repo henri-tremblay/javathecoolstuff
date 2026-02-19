@@ -13,17 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pro.tremblay.core;
+package pro.tremblay.core.generator;
 
-public interface PriceService {
+public class UltimateGenerator {
 
-    /**
-     * Returns the current price of a security.
-     *
-     * @param security security for which we want a price
-     * @throws IllegalArgumentException if no price is found at this date
-     * @return the price of the security
-     */
-    Amount getPrice(Security security);
-
+    static void main() throws Exception {
+        PositionGenerator.main();
+        PriceGenerator.main();
+        TransactionGenerator.main();
+    }
 }

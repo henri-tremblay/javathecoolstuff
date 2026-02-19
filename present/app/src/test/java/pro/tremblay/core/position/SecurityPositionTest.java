@@ -13,42 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pro.tremblay.core;
+package pro.tremblay.core.position;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
-import nl.jqno.equalsverifier.Warning;
 import org.junit.jupiter.api.Test;
+import pro.tremblay.core.Quantity;
+import pro.tremblay.core.SecuritiesForTest;
 
-import java.math.BigDecimal;
+import static org.assertj.core.api.Assertions.assertThat;
 
-import static pro.tremblay.core.Assertions.assertThat;
+class SecurityPositionTest {
 
-class AmountTest {
+    private SecurityPosition securityPosition = new SecurityPosition(SecuritiesForTest.GOOGL, Quantity.ten());
 
     @Test
-    void amountDouble() {
-        assertThat(new Amount(12.1)).isEqualTo("12.10");
+    void isFlat_notFlat() {
+        assertThat(securityPosition.isFlat()).isFalse();
     }
 
     @Test
-    void amountInteger() {
-        assertThat(new Amount(12L)).isEqualTo("12.00");
+    void isFlat_flat() {
+        securityPosition = new SecurityPosition(SecuritiesForTest.GOOGL, Quantity.zero());
+        assertThat(securityPosition.isFlat()).isTrue();
     }
 
     @Test
-    void amountBigDecimal() {
-        assertThat(new Amount(BigDecimal.valueOf(12))).isEqualTo("12.00");
+    void equalsHashCode() {
+        EqualsVerifier.simple().forClass(SecurityPosition.class).verify();
     }
 
-    @Test
-    void testToString() {
-        assertThat(new Amount("1.2").toString()).isEqualTo("1.20$");
-    }
-
-    @Test
-    void testEquals() {
-        EqualsVerifier.forClass(Amount.class)
-            .suppress(Warning.NULL_FIELDS)
-            .verify();
-    }
 }

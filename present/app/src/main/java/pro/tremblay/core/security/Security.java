@@ -13,25 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pro.tremblay.core;
+package pro.tremblay.core.security;
 
-import org.junit.jupiter.api.Test;
+import net.jcip.annotations.ThreadSafe;
 
-import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.util.Objects;
 
-import static org.assertj.core.api.Assertions.assertThat;
+/**
+ * Representation of a security.
+ */
+@ThreadSafe
+public record Security(String symbol, String name, String exchange, String assetType, LocalDate ipoDate) {
 
-class SecurityServiceTest {
-
-    private final SecurityService securityService = new SecurityService(Paths.get("../../data/securities_short.csv"));
-
-    @Test
-    void allSecurities() {
-        assertThat(securityService.allSecurities()).containsExactlyInAnyOrderElementsOf(SecuritiesForTest.SECURITIES);
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        return o instanceof Security security &&  symbol.equals(security.symbol) && exchange.equals(security.exchange);
     }
 
-    @Test
-    void findForTicker() {
-        assertThat(securityService.findForTicker("IBM")).isEqualTo(SecuritiesForTest.IBM);
+    @Override
+    public int hashCode() {
+        return Objects.hash(symbol, exchange);
     }
+
 }

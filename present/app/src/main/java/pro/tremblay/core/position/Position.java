@@ -13,9 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pro.tremblay.core;
+package pro.tremblay.core.position;
 
 import net.jcip.annotations.NotThreadSafe;
+import pro.tremblay.core.Amount;
+import pro.tremblay.core.Quantity;
+import pro.tremblay.core.price.PriceService;
+import pro.tremblay.core.security.Security;
+import pro.tremblay.core.transaction.Transaction;
 
 import java.util.AbstractMap;
 import java.util.Collection;
@@ -23,8 +28,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import static pro.tremblay.core.SecurityPosition.securityPosition;
 
 /**
  * All positions (cash and security) of a user. There is only one cash position since we are trading in only one
@@ -74,7 +77,7 @@ public class Position {
         for (SecurityPosition sp : securityPositions) {
             // No need to add flat positions
             if (!sp.isFlat()) {
-                this.securityPositions.put(sp.getSecurity(), sp.getQuantity());
+                this.securityPositions.put(sp.security(), sp.quantity());
             }
         }
         return this;
@@ -99,8 +102,8 @@ public class Position {
         return securityPositions
             .entrySet()
             .stream()
-            .map(entry -> securityPosition(entry.getKey(), entry.getValue()))
-            .collect(Collectors.toList());
+            .map(entry -> new SecurityPosition(entry.getKey(), entry.getValue()))
+            .toList();
     }
 
     @Override

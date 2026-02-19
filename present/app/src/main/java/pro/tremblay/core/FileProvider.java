@@ -15,21 +15,33 @@
  */
 package pro.tremblay.core;
 
-import net.jcip.annotations.ThreadSafe;
+import java.nio.file.Path;
 
-import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+public class FileProvider {
 
-@ThreadSafe
-public class FakePriceService implements PriceService {
+    private final Path data = Path.of("../../data");
 
-    private final ConcurrentMap<Security, Amount> prices = new ConcurrentHashMap<>();
-    private final Random random = new Random();
-
-    @Override
-    public Amount getPrice(Security security) {
-        return prices.computeIfAbsent(security, s -> Amount.amnt(10 + random.nextInt(190)));
+    public Path securityFile() {
+        return data.resolve("securities.csv");
     }
 
+    public Path shortSecurityFile() {
+        return data.resolve("securities_short.csv");
+    }
+
+    public Path positionFile() {
+        return data.resolve("positions.csv");
+    }
+
+    public Path longPositionFile() {
+        return data.resolve("positions_long.csv");
+    }
+
+    public Path transactionFile() {
+        return data.resolve("transactions.csv");
+    }
+
+    public Path priceFile() {
+        return data.resolve("prices.csv");
+    }
 }

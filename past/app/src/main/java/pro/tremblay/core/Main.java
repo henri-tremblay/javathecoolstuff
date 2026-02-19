@@ -18,6 +18,7 @@ package pro.tremblay.core;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.List;
@@ -40,13 +41,14 @@ public class Main {
         "</html>";
 
     public static void main(String[] args) throws IOException {
-        SecurityService securityService = new SecurityService(Paths.get("securities.csv"));
+        Path data = Paths.get("../../data");
+        SecurityService securityService = new SecurityService(data.resolve("securities.csv"));
         PositionReader positionReader = new PositionReader(securityService);
         PriceService priceService = new FakePriceService();
         TransactionReader transactionReader = new TransactionReader(securityService);
 
-        Position current = positionReader.readFromFile(Paths.get("positions.csv"));
-        List<Transaction> transactions = transactionReader.read(Paths.get("transactions.csv"));
+        Position current = positionReader.readFromFile(data.resolve("positions.csv"));
+        List<Transaction> transactions = transactionReader.read(data.resolve("transactions.csv"));
 
         Amount currentAmount = current.securityPositionValue(priceService);
         Position initial = current.copy();
@@ -56,7 +58,7 @@ public class Main {
         String result = TEMPLATE
             .replace("${initialValue}", initialAmount.toString())
             .replace("${currentValue}", currentAmount.toString());
-        Files.write(Paths.get("result.html"), result.getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+        Files.write(Paths.get("index.html"), result.getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
 
         System.out.println(result);
     }

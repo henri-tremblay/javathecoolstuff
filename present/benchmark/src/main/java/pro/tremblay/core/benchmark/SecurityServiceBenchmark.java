@@ -15,33 +15,22 @@
  */
 package pro.tremblay.core.benchmark;
 
-import org.openjdk.jmh.annotations.Benchmark;
-import org.openjdk.jmh.annotations.BenchmarkMode;
-import org.openjdk.jmh.annotations.Fork;
-import org.openjdk.jmh.annotations.Level;
-import org.openjdk.jmh.annotations.Measurement;
-import org.openjdk.jmh.annotations.Mode;
-import org.openjdk.jmh.annotations.OutputTimeUnit;
-import org.openjdk.jmh.annotations.Scope;
-import org.openjdk.jmh.annotations.State;
-import org.openjdk.jmh.annotations.TearDown;
-import org.openjdk.jmh.annotations.Warmup;
-import pro.tremblay.core.Security;
-import pro.tremblay.core.SecurityService;
+import module jmh.core;
+import module app;
 
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
 @BenchmarkMode(Mode.SingleShotTime)
-@OutputTimeUnit(TimeUnit.MILLISECONDS)
-@Warmup(iterations = 10, time = 1)
-@Measurement(iterations = 5, time = 2)
+@OutputTimeUnit(TimeUnit.NANOSECONDS)
+@Warmup(iterations = 10, batchSize = 1)
+@Measurement(iterations = 5, batchSize = 1)
 @Fork(2)
 @State(Scope.Benchmark)
 public class SecurityServiceBenchmark {
 
-    private final SecurityService securityService = new SecurityService(Paths.get("../../data/securities.csv"));
+    private final SecurityService securityService = new SecurityService(Path.of("../data/securities.csv"));
 
     @Benchmark
     public Collection<Security> loadAllSecurities() {

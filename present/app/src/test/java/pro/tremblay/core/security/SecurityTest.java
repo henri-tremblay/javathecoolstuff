@@ -13,42 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pro.tremblay.core;
+package pro.tremblay.core.security;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
-import nl.jqno.equalsverifier.Warning;
 import org.junit.jupiter.api.Test;
 
-import java.math.BigDecimal;
-
-import static pro.tremblay.core.Assertions.assertThat;
-
-class AmountTest {
-
-    @Test
-    void amountDouble() {
-        assertThat(new Amount(12.1)).isEqualTo("12.10");
-    }
-
-    @Test
-    void amountInteger() {
-        assertThat(new Amount(12L)).isEqualTo("12.00");
-    }
-
-    @Test
-    void amountBigDecimal() {
-        assertThat(new Amount(BigDecimal.valueOf(12))).isEqualTo("12.00");
-    }
-
-    @Test
-    void testToString() {
-        assertThat(new Amount("1.2").toString()).isEqualTo("1.20$");
-    }
+class SecurityTest {
 
     @Test
     void testEquals() {
-        EqualsVerifier.forClass(Amount.class)
-            .suppress(Warning.NULL_FIELDS)
+        EqualsVerifier.simple().forClass(Security.class)
+            .withOnlyTheseFields("symbol", "exchange")
+            .withNonnullFields("symbol", "exchange")
             .verify();
     }
+
 }
