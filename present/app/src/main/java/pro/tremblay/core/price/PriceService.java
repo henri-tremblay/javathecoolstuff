@@ -32,9 +32,11 @@ public class PriceService implements AutoCloseable {
 
     private final HttpClient client = HttpClient.newHttpClient();
     private final String baseUrl;
+    private final AuthenticationProvider auth;
 
-    public PriceService(String baseUrl) {
+    public PriceService(String baseUrl, AuthenticationProvider auth) {
         this.baseUrl = baseUrl;
+        this.auth = auth;
     }
 
     /**
@@ -56,6 +58,7 @@ public class PriceService implements AutoCloseable {
     private @Nullable Amount queryPrice(String ticker) {
         var request = HttpRequest.newBuilder(URI.create(baseUrl + "/price/" + URLEncoder.encode(ticker, StandardCharsets.UTF_8)))
                 .header("Accept", "text/plain")
+                .header("Authorization", "Basic " + auth.password())
                 .GET()
                 .build();
         HttpResponse<String> body;

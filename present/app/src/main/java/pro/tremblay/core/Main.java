@@ -16,8 +16,10 @@
 package pro.tremblay.core;
 
 import com.sun.net.httpserver.HttpServer;
+import org.jspecify.annotations.Nullable;
 import pro.tremblay.core.position.Position;
 import pro.tremblay.core.position.PositionReader;
+import pro.tremblay.core.price.AuthenticationProvider;
 import pro.tremblay.core.price.PriceService;
 import pro.tremblay.core.security.SecurityService;
 import pro.tremblay.core.transaction.Transaction;
@@ -29,7 +31,7 @@ import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-public class Main {
+public class Main implements AuthenticationProvider {
 
     private static final String TEMPLATE = """
         <!DOCTYPE html>
@@ -60,41 +62,53 @@ public class Main {
         </body>
         </html>""";
 
-    void main() throws IOException {
+    private static final ScopedValue<String> authScoped = ScopedValue.newInstance();
+
+    void main() {
         FileProvider fileProvider = new FileProvider();
 
         SecurityService securityService = new SecurityService(fileProvider.securityFile());
         PositionReader positionReader = new PositionReader(securityService);
         TransactionReader transactionReader = new TransactionReader(securityService);
 
-        Position current = positionReader.readFromFile(fileProvider.positionFile());
-        List<Transaction> transactions = transactionReader.read(fileProvider.transactionFile());
+        try {
+            Position current = positionReader.readFromFile(fileProvider.positionFile());
+            List<Transaction> transactions = transactionReader.read(fileProvider.transactionFile());
 
-        try (PriceService priceService = new PriceService("http://localhost:8000")) {
-            HttpServer server = launchServer();
-            server.createContext("/", exchange -> {
-                Amount currentAmount = current.securityPositionValue(priceService);
-                Position initial = current.copy();
-                initial.revert(transactions);
-                Amount initialAmount = initial.securityPositionValue(priceService);
+            try (PriceService priceService = new PriceService("http://localhost:8000", this)) {
+                HttpServer server = launchServer();
+                server.createContext("/", exchange -> {
+                    ScopedValue.where(authScoped, "password").call(new ScopedValue.CallableOp<Object, IOException>() {
+                        @Override
+                        public @Nullable Object call() throws IOException {
+                            Amount currentAmount = current.securityPositionValue(priceService);
+                            Position initial = current.copy();
+                            initial.revert(transactions);
+                            Amount initialAmount = initial.securityPositionValue(priceService);
 
-                String positions = current.getSecurityPositions().stream()
-                    .map(sp -> String.format("<tr><td>%s</td><td>%s</td><td>%s</td></tr>",
-                        sp.security().symbol(),
-                        sp.quantity(),
-                        priceService.getPrice(sp.security())))
-                    .collect(java.util.stream.Collectors.joining("\n"));
+                            String positions = current.getSecurityPositions().stream()
+                                .map(sp -> String.format("<tr><td>%s</td><td>%s</td><td>%s</td></tr>",
+                                    sp.security().symbol(),
+                                    sp.quantity(),
+                                    priceService.getPrice(sp.security())))
+                                .collect(java.util.stream.Collectors.joining("\n"));
 
-                String result = TEMPLATE.formatted(initialAmount, currentAmount, positions);
-                byte[] body = result.getBytes(StandardCharsets.UTF_8);
-                exchange.getResponseHeaders().set("Content-Type", "text/html; charset=utf-8");
-                exchange.sendResponseHeaders(200, body.length);
-                try (exchange; OutputStream os = exchange.getResponseBody()) {
-                    os.write(body);
-                }
-            });
-            IO.readln("Type any key to stop the server");
-            server.stop(0);
+                            String result = TEMPLATE.formatted(initialAmount, currentAmount, positions);
+                            byte[] body = result.getBytes(StandardCharsets.UTF_8);
+                            exchange.getResponseHeaders().set("Content-Type", "text/html; charset=utf-8");
+                            exchange.sendResponseHeaders(200, body.length);
+                            try (exchange; OutputStream os = exchange.getResponseBody()) {
+                                os.write(body);
+                            }
+                            return null;
+                        }
+                    });
+                });
+                IO.readln("Type any key to stop the server");
+                server.stop(0);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -104,6 +118,10 @@ public class Main {
         return server;
     }
 
+    @Override
+    public String password() {
+        return authScoped.get();
+    }
 }
 
 // mvn -pl app dependency:copy-dependencies -DincludeScope=runtime -DoutputDirectory=target/mods

@@ -20,6 +20,7 @@ module app {
     requires org.jspecify;
     requires java.net.http;
     requires jdk.httpserver;
+    requires org.slf4j;
 
     exports pro.tremblay.core;
     exports pro.tremblay.core.generator;

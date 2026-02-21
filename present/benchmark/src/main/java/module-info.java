@@ -17,4 +17,5 @@
 module benchmark {
     requires jmh.core;
     requires app;
+    requires org.jspecify;
 }

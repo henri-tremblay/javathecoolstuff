@@ -17,6 +17,8 @@ package pro.tremblay.core;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import pro.tremblay.core.price.RandomPriceRepository;
 
 import java.io.IOException;
@@ -28,6 +30,8 @@ import java.nio.charset.StandardCharsets;
  * Service returning security prices. This is actually a fake implementation using randomly generated prices.
  */
 public class PriceServer implements AutoCloseable {
+
+    private static final Logger logger = LoggerFactory.getLogger(PriceServer.class);
 
     private final HttpServer server;
     private final RandomPriceRepository priceRepository;
@@ -47,6 +51,12 @@ public class PriceServer implements AutoCloseable {
         var server = HttpServer.create(new InetSocketAddress(8000), 0);
 
         server.createContext("/price", exchange -> {
+            String password = exchange.getRequestHeaders().get("Authorization").getFirst();
+            if (!"Basic password".equals(password)) {
+                logger.warn("Unauthorized access to /price");
+                exchange.sendResponseHeaders(401, 0);
+                return;
+            }
             String ticker = extractTicker(exchange);
             Amount price = priceRepository.getPrice(ticker);
             byte[] body = price.value().toPlainString().getBytes(StandardCharsets.UTF_8);

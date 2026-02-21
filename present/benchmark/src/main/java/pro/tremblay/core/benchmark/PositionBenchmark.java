@@ -15,8 +15,24 @@
  */
 package pro.tremblay.core.benchmark;
 
-import module jmh.core;
-import module app;
+import org.jspecify.annotations.NonNull;
+import org.openjdk.jmh.annotations.Benchmark;
+import org.openjdk.jmh.annotations.BenchmarkMode;
+import org.openjdk.jmh.annotations.Fork;
+import org.openjdk.jmh.annotations.Level;
+import org.openjdk.jmh.annotations.Measurement;
+import org.openjdk.jmh.annotations.Mode;
+import org.openjdk.jmh.annotations.OutputTimeUnit;
+import org.openjdk.jmh.annotations.Scope;
+import org.openjdk.jmh.annotations.Setup;
+import org.openjdk.jmh.annotations.State;
+import org.openjdk.jmh.annotations.Warmup;
+import pro.tremblay.core.Amount;
+import pro.tremblay.core.position.Position;
+import pro.tremblay.core.position.PositionReader;
+import pro.tremblay.core.price.AuthenticationProvider;
+import pro.tremblay.core.price.PriceService;
+import pro.tremblay.core.security.SecurityService;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -29,9 +45,9 @@ import java.util.concurrent.TimeUnit;
 @Measurement(iterations = 5, time = 2)
 @Fork(2)
 @State(Scope.Benchmark)
-public class PositionBenchmark {
+public class PositionBenchmark implements AuthenticationProvider {
 
-    PriceService priceService = new PriceService("http://localhost:8000");
+    PriceService priceService = new PriceService("http://localhost:8000", this);
     Position current;
 
     @Setup(Level.Trial)
@@ -46,4 +62,8 @@ public class PositionBenchmark {
         return current.securityPositionValue(priceService);
     }
 
+    @Override
+    public @NonNull String password() {
+        return "password";
+    }
 }

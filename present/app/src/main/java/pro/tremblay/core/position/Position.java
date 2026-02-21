@@ -26,9 +26,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.StructuredTaskScope;
 import java.util.stream.Collectors;
 
 /**
@@ -92,18 +90,23 @@ public class Position {
     }
 
     public Amount securityPositionValue(PriceService priceService) {
-        try (ExecutorService service = Executors.newSingleThreadExecutor()) {
-            return securityPositions
+        try (var scope = StructuredTaskScope.open(StructuredTaskScope.Joiner.awaitAllSuccessfulOrThrow())) {
+            List<StructuredTaskScope.Subtask<Amount>> prices = securityPositions
                 .entrySet()
                 .stream()
-                .map(entry -> service.submit(() -> priceService.getPrice(entry.getKey()).multiply(entry.getValue())))
-                .map(future -> {
-                    try {
-                        return future.get();
-                    } catch (InterruptedException | ExecutionException e) {
-                        throw new RuntimeException(e);
-                    }
-                })
+                .map(entry -> scope.fork(() ->
+                    priceService.getPrice(entry.getKey()).multiply(entry.getValue())))
+                .toList();
+
+            try {
+                scope.join();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                return Amount.zero();
+            }
+
+            return prices.stream()
+                .map(StructuredTaskScope.Subtask::get)
                 .reduce(Amount.zero(), Amount::add);
         }
     }
