@@ -34,6 +34,7 @@ class PriceServerTest {
     void test() throws Exception {
         HttpRequest request = HttpRequest.newBuilder(URI.create("http://localhost:8000/price/IBM"))
             .header("Accept", "text/plain")
+            .header("Authorization", "Basic password")
             .GET()
             .build();
 
