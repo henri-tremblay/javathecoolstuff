@@ -39,7 +39,8 @@ public record Amount(BigDecimal value) implements Numeric<Amount> {
     }
 
     public Amount(String value) {
-        this(new BigDecimal(Objects.requireNonNull(value)));
+        BigDecimal convertedValue = new BigDecimal(Objects.requireNonNull(value));
+        this(convertedValue);
     }
 
     @Override
