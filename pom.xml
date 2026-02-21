@@ -258,9 +258,9 @@
                         <exclude>.mvn/**</exclude>
                         <exclude>**/*.csv</exclude>
                         <!-- generated stuff -->
-                        <exclude>myjre/**</exclude>
-                        <exclude>myapp.app/**</exclude>
-                        <exclude>myapp-*.dmg</exclude>
+                        <exclude>app.aot</exclude>
+                        <exclude>app.app/**</exclude>
+                        <exclude>app-*.dmg</exclude>
                         <exclude>target/**</exclude>
                         <exclude>result.html</exclude>
                         <exclude>query</exclude>
