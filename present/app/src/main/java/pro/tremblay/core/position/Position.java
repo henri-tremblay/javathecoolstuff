@@ -26,6 +26,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 /**
@@ -89,11 +92,20 @@ public class Position {
     }
 
     public Amount securityPositionValue(PriceService priceService) {
-        return securityPositions
-            .entrySet()
-            .stream()
-            .map(entry -> priceService.getPrice(entry.getKey()).multiply(entry.getValue()))
-            .reduce(Amount.zero(), Amount::add);
+        try (ExecutorService service = Executors.newSingleThreadExecutor()) {
+            return securityPositions
+                .entrySet()
+                .stream()
+                .map(entry -> service.submit(() -> priceService.getPrice(entry.getKey()).multiply(entry.getValue())))
+                .map(future -> {
+                    try {
+                        return future.get();
+                    } catch (InterruptedException | ExecutionException e) {
+                        throw new RuntimeException(e);
+                    }
+                })
+                .reduce(Amount.zero(), Amount::add);
+        }
     }
 
     public Collection<SecurityPosition> getSecurityPositions() {
