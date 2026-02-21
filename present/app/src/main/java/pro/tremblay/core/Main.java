@@ -106,17 +106,5 @@ public class Main {
 
 }
 
-// PID=$(jcmd -l | grep "pro.tremblay.core.Main" | cut -d' ' -f1)
-// jcmd $PID JFR.start name=on_demand settings=profile jdk.ExecutionSample#period=1ms jdk.NativeMethodSample#period=1ms
-// jcmd $PID JFR.check
-// jcmd $PID JFR.dump name=on_demand filename=app.jfr
-// jcmd $PID JFR.stop name=on_demand
-// jfr summary app.jfr
-
-// jdeps app/target/app-1.0-SNAPSHOT.jar
-// jlink --add-modules java.base,java.net.http --output myjre --no-header-files --no-man-pages --strip-java-debug-attributes --strip-debug --compress=2
-// myjre/bin/java -cp app/target/app-1.0-SNAPSHOT.jar pro.tremblay.core.Main
-// jpackage --name myapp --input app/target --main-jar app-1.0-SNAPSHOT.jar --main-class pro.tremblay.core.Main --runtime-image myjre
-// ./myapp.app/Contents/MacOS/myapp
-
-// jlink --add-modules java.base,java.net.http,jdk.random --output myjre --no-header-files --no-man-pages --strip-java-debug-attributes --strip-debug --compress=2
+// mvn -pl app dependency:copy-dependencies -DincludeScope=runtime -DoutputDirectory=target/mods
+// jpackage --app-version 1.0 --name app --module-path app/target/classes:app/target/mods --module app/pro.tremblay.core.Main --java-options --enable-preview

@@ -11,3 +11,5 @@ dependency-reduced-pom.xml
 /myapp-*.dmg
 *.jfr
 *.aot
+/present/app-1.0.dmg
+/present/app.app

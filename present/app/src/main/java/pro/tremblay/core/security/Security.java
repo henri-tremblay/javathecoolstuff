@@ -15,15 +15,12 @@
  */
 package pro.tremblay.core.security;
 
-import net.jcip.annotations.ThreadSafe;
-
 import java.time.LocalDate;
 import java.util.Objects;
 
 /**
  * Representation of a security.
  */
-@ThreadSafe
 public record Security(String symbol, String name, String exchange, String assetType, LocalDate ipoDate) {
 
     @Override

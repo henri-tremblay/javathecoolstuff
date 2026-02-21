@@ -15,7 +15,6 @@
  */
 package pro.tremblay.core.transaction;
 
-import net.jcip.annotations.NotThreadSafe;
 import org.jspecify.annotations.Nullable;
 import pro.tremblay.core.Amount;
 import pro.tremblay.core.position.Position;
@@ -27,7 +26,6 @@ import java.time.LocalDate;
 /**
  * A transaction that happened on a position.
  */
-@NotThreadSafe
 public sealed interface Transaction permits Buy, Sell, Deposit, Withdrawal {
 
     static Transaction buy(LocalDate date, Amount cash, Security security, Quantity quantity) {

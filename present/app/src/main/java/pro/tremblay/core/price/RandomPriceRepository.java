@@ -15,7 +15,6 @@
  */
 package pro.tremblay.core.price;
 
-import net.jcip.annotations.ThreadSafe;
 import pro.tremblay.core.Amount;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -25,7 +24,6 @@ import java.util.random.RandomGenerator;
 /**
  * Service returning security prices. This is actually a fake implementation using randomly generated prices.
  */
-@ThreadSafe
 public class RandomPriceRepository {
 
     private final ConcurrentMap<String, Double> prices = new ConcurrentHashMap<>();

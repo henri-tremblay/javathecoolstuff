@@ -15,14 +15,12 @@
  */
 package pro.tremblay.core.position;
 
-import net.jcip.annotations.ThreadSafe;
 import pro.tremblay.core.Quantity;
 import pro.tremblay.core.security.Security;
 
 /**
  * Quantity possessed of a given security.
  */
-@ThreadSafe
 public record SecurityPosition(Security security, Quantity quantity) {
 
     public boolean isFlat() {

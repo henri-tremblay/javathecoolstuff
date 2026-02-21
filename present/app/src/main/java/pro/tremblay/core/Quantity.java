@@ -15,12 +15,9 @@
  */
 package pro.tremblay.core;
 
-import net.jcip.annotations.ThreadSafe;
-
 import java.math.BigDecimal;
 import java.util.Objects;
 
-@ThreadSafe
 public record Quantity(BigDecimal value) implements Numeric<Quantity> {
 
     private static final Quantity ZERO = new Quantity(BigDecimal.ZERO);

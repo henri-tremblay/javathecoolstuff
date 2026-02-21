@@ -15,7 +15,6 @@
  */
 package pro.tremblay.core.position;
 
-import net.jcip.annotations.NotThreadSafe;
 import pro.tremblay.core.Amount;
 import pro.tremblay.core.Quantity;
 import pro.tremblay.core.price.PriceService;
@@ -33,7 +32,6 @@ import java.util.stream.Collectors;
  * All positions (cash and security) of a user. There is only one cash position since we are trading in only one
  * currency.
  */
-@NotThreadSafe
 public class Position {
 
     private Amount cash = Amount.zero();

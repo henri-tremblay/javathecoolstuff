@@ -15,7 +15,6 @@
  */
 package pro.tremblay.core.price;
 
-import net.jcip.annotations.ThreadSafe;
 import org.jspecify.annotations.Nullable;
 import pro.tremblay.core.Amount;
 import pro.tremblay.core.security.Security;
@@ -29,7 +28,6 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 
-@ThreadSafe
 public class PriceService implements AutoCloseable {
 
     private final HttpClient client = HttpClient.newHttpClient();

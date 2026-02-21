@@ -17,7 +17,6 @@ package pro.tremblay.core;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
-import net.jcip.annotations.ThreadSafe;
 import pro.tremblay.core.price.RandomPriceRepository;
 
 import java.io.IOException;
@@ -28,7 +27,6 @@ import java.nio.charset.StandardCharsets;
 /**
  * Service returning security prices. This is actually a fake implementation using randomly generated prices.
  */
-@ThreadSafe
 public class PriceServer implements AutoCloseable {
 
     private final HttpServer server;

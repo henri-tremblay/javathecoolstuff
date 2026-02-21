@@ -15,7 +15,6 @@
  */
 package pro.tremblay.core.price;
 
-import net.jcip.annotations.ThreadSafe;
 import pro.tremblay.core.Amount;
 
 import java.io.IOException;
@@ -26,7 +25,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Stream;
 
-@ThreadSafe
 public class HistoricalPriceRepository {
 
     private final ConcurrentMap<String, List<Amount>> priceMap = new ConcurrentHashMap<>();
