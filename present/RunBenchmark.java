@@ -34,10 +34,3 @@ void main(String... args) throws Exception {
     Command.command("java", "-XX:AOTCache=app.aot", "--enable-preview", "-jar", "benchmark/target/benchmarks.jar", args[0]);
 }
 
-private static void command(String... args) throws Exception {
-    ProcessBuilder builder = new ProcessBuilder(args)
-        .inheritIO();
-    Process process = builder.start();
-
-    process.waitFor();
-}
