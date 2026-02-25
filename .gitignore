@@ -13,3 +13,4 @@ dependency-reduced-pom.xml
 *.aot
 /present/app-1.0.dmg
 /present/app.app
+/past/app/index.html

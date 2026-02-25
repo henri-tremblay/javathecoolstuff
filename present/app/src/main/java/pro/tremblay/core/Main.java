@@ -15,6 +15,7 @@
  */
 package pro.tremblay.core;
 
+import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 import org.jspecify.annotations.Nullable;
 import pro.tremblay.core.position.Position;
@@ -77,39 +78,41 @@ public class Main implements AuthenticationProvider {
 
             try (PriceService priceService = new PriceService("http://localhost:8000", this)) {
                 HttpServer server = launchServer();
-                server.createContext("/", exchange -> {
-                    ScopedValue.where(authScoped, "password").call(new ScopedValue.CallableOp<Object, IOException>() {
-                        @Override
-                        public @Nullable Object call() throws IOException {
-                            Amount currentAmount = current.securityPositionValue(priceService);
-                            Position initial = current.copy();
-                            initial.revert(transactions);
-                            Amount initialAmount = initial.securityPositionValue(priceService);
-
-                            String positions = current.getSecurityPositions().stream()
-                                .map(sp -> String.format("<tr><td>%s</td><td>%s</td><td>%s</td></tr>",
-                                    sp.security().symbol(),
-                                    sp.quantity(),
-                                    priceService.getPrice(sp.security())))
-                                .collect(java.util.stream.Collectors.joining("\n"));
-
-                            String result = TEMPLATE.formatted(initialAmount, currentAmount, positions);
-                            byte[] body = result.getBytes(StandardCharsets.UTF_8);
-                            exchange.getResponseHeaders().set("Content-Type", "text/html; charset=utf-8");
-                            exchange.sendResponseHeaders(200, body.length);
-                            try (exchange; OutputStream os = exchange.getResponseBody()) {
-                                os.write(body);
-                            }
-                            return null;
-                        }
-                    });
-                });
+                server.createContext("/", exchange -> ScopedValue.where(authScoped, "password").call(new ScopedValue.CallableOp<Object, IOException>() {
+                    @Override
+                    public @Nullable Object call() throws IOException {
+                        return calculatePortfolioValue(current, priceService, transactions, exchange);
+                    }
+                }));
                 IO.readln("Type any key to stop the server");
                 server.stop(0);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static @Nullable Object calculatePortfolioValue(Position current, PriceService priceService, List<Transaction> transactions, HttpExchange exchange) throws IOException {
+        Amount currentAmount = current.securityPositionValue(priceService);
+        Position initial = current.copy();
+        initial.revert(transactions);
+        Amount initialAmount = initial.securityPositionValue(priceService);
+
+        String positions = current.getSecurityPositions().stream()
+            .map(sp -> String.format("<tr><td>%s</td><td>%s</td><td>%s</td></tr>",
+                sp.security().symbol(),
+                sp.quantity(),
+                priceService.getPrice(sp.security())))
+            .collect(java.util.stream.Collectors.joining("\n"));
+
+        String result = TEMPLATE.formatted(initialAmount, currentAmount, positions);
+        byte[] body = result.getBytes(StandardCharsets.UTF_8);
+        exchange.getResponseHeaders().set("Content-Type", "text/html; charset=utf-8");
+        exchange.sendResponseHeaders(200, body.length);
+        try (exchange; OutputStream os = exchange.getResponseBody()) {
+            os.write(body);
+        }
+        return null;
     }
 
     private HttpServer launchServer() throws IOException {

@@ -51,7 +51,7 @@ public class PriceServer implements AutoCloseable {
         var server = HttpServer.create(new InetSocketAddress(8000), 0);
 
         server.createContext("/price", exchange -> {
-            String password = exchange.getRequestHeaders().get("Authorization").getFirst();
+            String password = exchange.getRequestHeaders().get("Authorization").getFirst(); // sequenced collection
             if (!"Basic password".equals(password)) {
                 logger.warn("Unauthorized access to /price");
                 exchange.sendResponseHeaders(401, 0);

@@ -43,14 +43,12 @@ public interface Numeric<T extends Numeric<T>> {
         return fromValue(value().negate());
     }
 
-    /**
-     * Scale this numerator to another denominator. E.g. if this is "3" on "4" ("from" param)
-     * and we want to scale to "8" ("to" param), we expect 3 x 8 / 4 = 6 as a result.
-     *
-     * @param from denominator from which to start
-     * @param to denominator to go to
-     * @return the numerator scaling to another denominator
-     */
+    /// Scale this numerator to another denominator. E.g. if this is `3` on `4` ("from" param)
+    /// and we want to scale to `8` ("to" param), we expect `3 x 8 / 4 = 6` as a result.
+    ///
+    /// @param from denominator from which to start
+    /// @param to denominator to go to
+    /// @return the numerator scaling to another denominator
     default T scale(int from, int to) {
         return fromValue(value().multiply(BigDecimal.valueOf(to))
             .divide(BigDecimal.valueOf(from), 2, RoundingMode.HALF_UP));

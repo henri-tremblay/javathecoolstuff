@@ -41,7 +41,3 @@ private static void command(String... args) throws Exception {
 
     process.waitFor();
 }
-
-//java -XX:AOTCacheOutput=app.aot Java11.java
-//time java -XX:AOTCache=app.aot Java11.java
-//time java Java11.java
